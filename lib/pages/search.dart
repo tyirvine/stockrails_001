@@ -38,7 +38,7 @@ class _SearchState extends State<Search> {
 
       await Future.delayed(Duration(seconds: 1));
 
-      var stockSearchData = await http.get( ('https://sandbox.iexapis.com/stable/search/apple?token=Tsk_801c26698a37427898480622dd23e138') );
+      var stockSearchData = await http.get( ('https://sandbox.iexapis.com/stable/search/' + '$search' + '?token=Tsk_801c26698a37427898480622dd23e138') );
       var stockSearchJSONData = json.decode(stockSearchData.body);
 
       print(stockSearchData.toString());
