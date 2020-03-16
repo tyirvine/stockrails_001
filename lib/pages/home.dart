@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stockrails_001/classes/stockSearch.dart';
+import 'package:stockrails_001/classes.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
 
     for (var s in stockSearchJSONData) {
       
-      StockSearch stockSearchUpdate = StockSearch(s["symbol"], s["exchange"]);
+      StockSearch stockSearchUpdate = StockSearch(s["symbol"], s["exchange"], s["securityName"], s["latestPrice"], s["change"]);
 
       stockSearchList.add(stockSearchUpdate);
 

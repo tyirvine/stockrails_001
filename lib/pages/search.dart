@@ -1,11 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:flappy_search_bar/flappy_search_bar.dart';
-import 'package:stockrails_001/classes/stockSearch.dart';
 
+
+// Packages
+import 'package:flutter/material.dart';
+import 'package:stockrails_001/classes.dart';
+
+
+// Dependencies
 import 'package:http/http.dart' as http;
+import 'package:flappy_search_bar/flappy_search_bar.dart';
+
+
+// Dart Files
 import 'dart:async';
 import 'dart:convert';
 
+
+
+/*........................................... Program ......................................*/
 
 class Search extends StatefulWidget {
   @override
@@ -23,9 +34,124 @@ class _SearchState extends State<Search> {
           child: SearchBar<StockSearch>(
             onSearch: getStockSearch,
             onItemFound: (StockSearch post, int index) {
-              return ListTile(
-                title: Text(post.ticker),
-                subtitle: Text(post.exchange),
+                return Column(
+                children: <Widget>[
+//-------------------------------------------------- List Stock Tile
+                  ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Flexible( //Ticker, Exchange, and Name
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+//-------------------------------------------------- Symbol & Exchange!
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  
+                                  Text(post.symbol), //Symbol
+
+                                  SizedBox(width: 5.0), //Spacer
+
+//-------------------------------------------------- Exchange!
+                                  Expanded(
+                                    child: Text( //Exchange
+                                      post.exchange,
+                                      style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 1,
+                                      softWrap: false,
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+//-------------------------------------------------- Company Name!
+                              Text(
+                                post.companyname,
+                                overflow: TextOverflow.fade,
+                                maxLines: 1,
+                                softWrap: false,
+                              ), //Company Name
+
+                            ],
+                          ),
+                        ),
+                        Flexible(
+//-------------------------------------------------- Price & Change! 
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+
+                              Text(post.latestprice.toString().replaceAll('null', '')), //Stock Price!
+
+                              SizedBox(height: 2.0), //Spacer
+                              
+                              if(post.change > 0) //Positive Change!
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.lightGreen,
+                                    borderRadius: BorderRadius.circular(2.0),
+                                  ),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                  child: Text(
+                                    post.change.toString().replaceAll('null', ''),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.0,
+                                      ),
+                                  ),
+                                ))
+
+                              else if(post.change < 0) //Negative Change!
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(2.0),
+                                  ),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                  child: Text(
+                                    post.change.toString().replaceAll('null', ''),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.0,
+                                      ),
+                                  ),
+                                ))
+
+                              else if(post.change == 0) //Negative Change!
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(2.0),
+                                  ),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                  child: Text(
+                                    post.change.toString().replaceAll('null', ''),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.0,
+                                      ),
+                                  ),
+                                )),
+
+
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                ],
               );
             },
           ),
@@ -34,24 +160,49 @@ class _SearchState extends State<Search> {
     );
   }
 
+
+
+
+
+//-------------------------------------------------- API Data!
+
     Future<List<StockSearch>> getStockSearch(String search) async {
 
+      String symbol;
       await Future.delayed(Duration(seconds: 1));
 
-      var stockSearchData = await http.get( ('https://sandbox.iexapis.com/stable/search/' + '$search' + '?token=Tsk_801c26698a37427898480622dd23e138') );
-      var stockSearchJSONData = json.decode(stockSearchData.body);
+      var stockSearchSymbolData = await http.get( ('https://sandbox.iexapis.com/stable/search/' + '$search' + '?token=Tsk_801c26698a37427898480622dd23e138') );
+      var stockSearchSymbolJSONData = json.decode(stockSearchSymbolData.body);
 
-      print(stockSearchData.toString());
-
+      List<Symbol> stockSymbolList = [];
       List<StockSearch> stockSearchList = [];
 
-      for (var s in stockSearchJSONData) {
-        StockSearch stockSearchUpdate = StockSearch(s["symbol"], s["exchange"]);
-        stockSearchList.add(stockSearchUpdate);
+      for (var u in stockSearchSymbolJSONData) {
+        
+        // --------------- This adds in the symbols from the first API search -----
+
+        Symbol stockSymbolUpdate = Symbol(u["symbol"]);
+        stockSymbolList.add(stockSymbolUpdate);
+        symbol = u["symbol"];
+        print(symbol);
+
+
+        // --------------- This gathers the remaining information using a new api request from the symbol list above -----
+
+        var stockSearchData = await http.get( ('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5') );
+        var stockSearchJSONData = json.decode(stockSearchData.body);
+
+        if (stockSearchData.statusCode == 200) {
+          if(stockSearchJSONData.toString().contains('latestPrice: null') == false) 
+            stockSearchList.add(StockSearch.fromJson(stockSearchJSONData));
+        }
+
       }
+      
+      // --------------- This instantiates the data to the UI -----
 
       return stockSearchList;
-      
+
   }
 }
 
@@ -60,3 +211,6 @@ class _SearchState extends State<Search> {
 
 
 
+
+
+/*........................................... Program ......................................*/
