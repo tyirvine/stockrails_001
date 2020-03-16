@@ -117,6 +117,9 @@ class _SearchState extends State<Search> {
                               Text(post.latestprice.toString().replaceAll('null', '')), //Stock Price!
 
                               SizedBox(height: 2.0), //Spacer
+
+
+                              if(post.changeRendered != 'null')
                               
                               if(post.changeRendered > 0) //Positive Change!
                               Container(
