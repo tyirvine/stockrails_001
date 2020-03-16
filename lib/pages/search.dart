@@ -25,12 +25,38 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
 
+
+  _showModalBottomSheet(context, String companyName) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          children: <Widget>[
+            Text(
+              '$companyName',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                  ),
+                ),
+            Container(
+              height: 300.0,
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: SearchBar<StockSearch>(
             onSearch: getStockSearch,
             onItemFound: (StockSearch post, int index) {
@@ -38,6 +64,9 @@ class _SearchState extends State<Search> {
                 children: <Widget>[
 //-------------------------------------------------- List Stock Tile
                   ListTile(
+                    onTap: () {
+                      _showModalBottomSheet(context, post.companyname);
+                    },
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -89,7 +118,7 @@ class _SearchState extends State<Search> {
 
                               SizedBox(height: 2.0), //Spacer
                               
-                              if(post.change > 0) //Positive Change!
+                              if(post.changeRendered > 0) //Positive Change!
                               Container(
                                 decoration: BoxDecoration(
                                     color: Colors.lightGreen,
@@ -107,7 +136,7 @@ class _SearchState extends State<Search> {
                                   ),
                                 ))
 
-                              else if(post.change < 0) //Negative Change!
+                              else if(post.changeRendered < 0) //Negative Change!
                               Container(
                                 decoration: BoxDecoration(
                                     color: Colors.red,
@@ -125,7 +154,7 @@ class _SearchState extends State<Search> {
                                   ),
                                 ))
 
-                              else if(post.change == 0) //Negative Change!
+                              else if(post.changeRendered == 0) //Negative Change!
                               Container(
                                 decoration: BoxDecoration(
                                     color: Colors.grey,
@@ -159,10 +188,6 @@ class _SearchState extends State<Search> {
       ),
     );
   }
-
-
-
-
 
 //-------------------------------------------------- API Data!
 
@@ -205,8 +230,6 @@ class _SearchState extends State<Search> {
 
   }
 }
-
-
 
 
 
