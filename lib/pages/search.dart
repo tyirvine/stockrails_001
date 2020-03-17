@@ -18,34 +18,132 @@ import 'dart:convert';
 
 /*........................................... Program ......................................*/
 
+String companyName;
+String exchange;
+String symbol;
+
 class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
-
-
-  _showModalBottomSheet(context, String companyName) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          children: <Widget>[
-            Text(
-              '$companyName',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                  ),
-                ),
-            Container(
-              height: 300.0,
+  
+//-------------------------------------------------- Bottom Sheet Card
+  
+  _showBottomSheet(context, String companyName, String exchange, String symbol) {
+      showModalBottomSheet(
+        context: (context),
+        builder: (BuildContext context){
+//-------------------------------------------------- Rounded Corners & Card
+          return Container(
+            height: 400.0,
+            color: Color(0xFF737373),
+            child: new Container(
+              decoration: new BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(15.0),
+              topRight: const Radius.circular(15.0))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0.0),
+//-------------------------------------------------- Drag Tab & Close
+                            child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              SizedBox(width: 50.0),
+                              Align(child: Icon(Icons.drag_handle), alignment: Alignment.center),
+                              IconButton(onPressed: () {Navigator.pop(context);}, icon: Icon(Icons.close)),
+                            ]),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+//-------------------------------------------------- Stock Info & Notifier Count
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+//-------------------------------------------------- Symbol / Exchange / Company Name
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                                        textBaseline: TextBaseline.alphabetic,
+                                        children: <Widget>[
+                                          Text(
+                                            '$symbol',
+                                            style: TextStyle(
+                                              fontSize: 25.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8.0),
+                                          Text(
+                                            '$exchange',
+                                            style: TextStyle(
+                                              fontSize: 11.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        '$companyName',
+                                      ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                    Column(
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.fromLTRB(10.0, 6.0, 6.0, 6.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.lightBlue,
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            textBaseline: TextBaseline.alphabetic,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '0',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        ),
+                                                    ),
+                                                    Icon(
+                                                      Icons.notifications,
+                                                      color: Colors.white,
+                                                      size: 18.0,
+                                                      ),
+                                                  ],
+                                          ),
+                                        ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 15.0),
+                          Divider(),
+                      ]),
+                  ],
+              ),
             ),
-          ],
-        );
-      }
-    );
+          );
+         }
+      );
   }
 
 
@@ -54,141 +152,145 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: SearchBar<StockSearch>(
-            onSearch: getStockSearch,
-            onItemFound: (StockSearch post, int index) {
-                return Column(
-                children: <Widget>[
-//-------------------------------------------------- List Stock Tile
-                  ListTile(
-                    onTap: () {
-                      _showModalBottomSheet(context, post.companyname);
-                    },
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Flexible( //Ticker, Exchange, and Name
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-//-------------------------------------------------- Symbol & Exchange!
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  
-                                  Text(post.symbol), //Symbol
+      body: Stack(
+        children: <Widget>[
 
-                                  SizedBox(width: 5.0), //Spacer
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: SearchBar<StockSearch>(
+              onSearch: getStockSearch,
+              onItemFound: (StockSearch post, int index) {
+                  return Column(
+                  children: <Widget>[
+//-------------------------------------------------- List Stock Tile
+                    ListTile(
+                      onTap: () {
+                        _showBottomSheet(context, post.companyname, post.exchange, post.symbol);
+                      },
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Flexible( //Ticker, Exchange, and Name
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+//-------------------------------------------------- Symbol & Exchange!
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    
+                                    Text(post.symbol), //Symbol
+
+                                    SizedBox(width: 5.0), //Spacer
 
 //-------------------------------------------------- Exchange!
-                                  Expanded(
-                                    child: Text( //Exchange
-                                      post.exchange,
-                                      style: TextStyle(fontSize: 12.0, color: Colors.grey),
-                                      overflow: TextOverflow.fade,
-                                      maxLines: 1,
-                                      softWrap: false,
+                                    Expanded(
+                                      child: Text( //Exchange
+                                        post.exchange,
+                                        style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                                        overflow: TextOverflow.fade,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                      ),
                                     ),
-                                  ),
 
-                                ],
-                              ),
+                                  ],
+                                ),
 
 //-------------------------------------------------- Company Name!
-                              Text(
-                                post.companyname,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: false,
-                              ), //Company Name
+                                Text(
+                                  post.companyname,
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                ), //Company Name
 
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Flexible(
+                          Flexible(
 //-------------------------------------------------- Price & Change! 
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
 
-                              Text(post.latestprice.toString().replaceAll('null', '')), //Stock Price!
+                                Text(post.latestprice.toString().replaceAll('null', '')), //Stock Price!
 
-                              SizedBox(height: 2.0), //Spacer
-
-
-                              if(post.changeRendered != 'null')
-                              
-                              if(post.changeRendered > 0) //Positive Change!
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.lightGreen,
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
-                                  child: Text(
-                                    post.change.toString().replaceAll('null', ''),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13.0,
-                                      ),
-                                  ),
-                                ))
-
-                              else if(post.changeRendered < 0) //Negative Change!
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
-                                  child: Text(
-                                    post.change.toString().replaceAll('null', ''),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13.0,
-                                      ),
-                                  ),
-                                ))
-
-                              else if(post.changeRendered == 0) //Negative Change!
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(2.0),
-                                  ),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
-                                  child: Text(
-                                    post.change.toString().replaceAll('null', ''),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13.0,
-                                      ),
-                                  ),
-                                )),
+                                SizedBox(height: 2.0), //Spacer
 
 
-                            ],
-                          ),
-                        )
-                      ],
+                                if(post.changeRendered != 'null')
+                                
+                                if(post.changeRendered > 0) //Positive Change!
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.lightGreen,
+                                      borderRadius: BorderRadius.circular(2.0),
+                                    ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                    child: Text(
+                                      post.change.toString().replaceAll('null', ''),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13.0,
+                                        ),
+                                    ),
+                                  ))
+
+                                else if(post.changeRendered < 0) //Negative Change!
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(2.0),
+                                    ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                    child: Text(
+                                      post.change.toString().replaceAll('null', ''),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13.0,
+                                        ),
+                                    ),
+                                  ))
+
+                                else if(post.changeRendered == 0) //Negative Change!
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(2.0),
+                                    ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                    child: Text(
+                                      post.change.toString().replaceAll('null', ''),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13.0,
+                                        ),
+                                    ),
+                                  )),
+
+
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(),
-                ],
-              );
-            },
+                    Divider(),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      ),
+        ),  
+      ]),
     );
   }
 
@@ -233,9 +335,6 @@ class _SearchState extends State<Search> {
 
   }
 }
-
-
-
 
 
 
