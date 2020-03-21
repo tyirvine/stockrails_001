@@ -86,11 +86,17 @@ class _SearchState extends State<Search> {
                                         style: TextStyle(
                                           fontSize: 11.0,
                                         ),
+                                        overflow: TextOverflow.fade,
+                                        maxLines: 1,
+                                        softWrap: false,
                                       ),
                                     ],
                                   ),
                                   Text(
                                     '$companyName',
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 1,
+                                      softWrap: false,
                                   ),
                                   ],
                                 ),
