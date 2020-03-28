@@ -3,6 +3,7 @@
 // Packages
 import 'package:flutter/material.dart';
 import 'package:stockrails_001/classes.dart';
+import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
 
 
 // Dependencies
@@ -23,152 +24,172 @@ String exchange;
 String symbol;
 
 
+
+
+
+
 class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
 }
 
 
+
+
+
+
 class _SearchState extends State<Search> {
 
 
-_afterLayout(_) {
-
-    final RenderBox _stockBottomSheetRenderBox = _stockBottomSheetKey.currentContext.findRenderObject();
-    final _stockBottomSheetPosition = _stockBottomSheetRenderBox.localToGlobal(Offset.zero);
-
-    print(_stockBottomSheetPosition);
-}
-
-@override
-void initState() {
-WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
-super.initState();
-}
 
 //Defines initial radius and key
+// final GlobalKey _stockBottomSheetKey = GlobalKey();
+
+// Size _stockBottomSheetSize;
+// Offset _stockBottomSheetPosition;
+
 BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
-GlobalKey _stockBottomSheetKey = GlobalKey();
+
+
+
+
+
+// @override
+// void initState() {
+// super.initState();
+// WidgetsBinding.instance.addPostFrameCallback((_) => _afterLayout());
+// }
+
+// _afterLayout() {
+//     RenderBox _stockBottomSheetRenderBox = _stockBottomSheetKey.currentContext.findRenderObject();
+//     _stockBottomSheetSize = _stockBottomSheetRenderBox.size;
+//     _stockBottomSheetPosition = _stockBottomSheetRenderBox.localToGlobal(Offset.zero);
+//     print(_stockBottomSheetPosition);
+//     print(_stockBottomSheetSize);
+// }
+
+
+
 
 
 
 //-------------------------------------------------- Bottom Sheet Card
   
   _showBottomSheet(context, String companyName, String exchange, String symbol) {
-      showModalBottomSheet(
+      my.showModalBottomSheet(
         context: (context),
-        isScrollControlled: true,
+        isScrollControlled: false,
         shape: RoundedRectangleBorder(
         borderRadius: _stockSheetBorderRadius,
         ),
         builder: (BuildContext context){
 //-------------------------------------------------- Rounded Corners & Card
           return Column(
-                  key: _stockBottomSheetKey,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0.0),
+                    // key: _stockBottomSheetKey,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+          padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0.0),
 //-------------------------------------------------- Drag Tab & Close
-                    child: SafeArea(
-                      top: true,
-                      bottom: false,
-                      child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-          SizedBox(width: 50.0),
-          Align(child: Icon(Icons.drag_handle), alignment: Alignment.center),
-          IconButton(onPressed: () {Navigator.pop(context);}, icon: Icon(Icons.close)),
-                      ]),
+          child: SafeArea(
+            top: true,
+            bottom: false,
+            child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+            SizedBox(width: 50.0),
+            Align(child: Icon(Icons.drag_handle), alignment: Alignment.center),
+            IconButton(onPressed: () {Navigator.pop(context);}, icon: Icon(Icons.close)),
+            ]),
+          ),
                     ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
 //-------------------------------------------------- Stock Info & Notifier Count
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-            Row(
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
 //-------------------------------------------------- Symbol / Exchange / Company Name
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: <Widget>[
-            Text(
-              '$symbol',
-              style: TextStyle(
-                fontSize: 25.0,
-                fontWeight: FontWeight.bold,
+                    Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+              Text(
+                '$symbol',
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(width: 8.0),
-            Text(
-              '$exchange',
-              style: TextStyle(
-                fontSize: 11.0,
+              SizedBox(width: 8.0),
+              Text(
+                '$exchange',
+                style: TextStyle(
+                  fontSize: 11.0,
+                ),
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+                softWrap: false,
               ),
+          ],
+                    ),
+                    Text(
+          '$companyName',
               overflow: TextOverflow.fade,
               maxLines: 1,
               softWrap: false,
-            ),
-                    ],
-                  ),
-                  Text(
-                    '$companyName',
-            overflow: TextOverflow.fade,
-            maxLines: 1,
-            softWrap: false,
-                  ),
-                  ],
-                ),
-              ],
-            ),
-                Column(
-                  children: <Widget>[
-                    Container(
-            padding: EdgeInsets.fromLTRB(10.0, 6.0, 6.0, 6.0),
-            decoration: BoxDecoration(
-              color: Colors.lightBlue,
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              textBaseline: TextBaseline.alphabetic,
-            children: <Widget>[
-            Text(
-              '0',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                ),
-            ),
-            Icon(
-              Icons.notifications,
-              color: Colors.white,
-              size: 18.0,
-              ),
-            ],
-            ),
                     ),
-              ],
-            ),
                     ],
                   ),
+                ],
+              ),
+                  Column(
+                    children: <Widget>[
+          Container(
+              padding: EdgeInsets.fromLTRB(10.0, 6.0, 6.0, 6.0),
+              decoration: BoxDecoration(
+                color: Colors.lightBlue,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                textBaseline: TextBaseline.alphabetic,
+              children: <Widget>[
+              Text(
+                '0',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  ),
+              ),
+              Icon(
+                Icons.notifications,
+                color: Colors.white,
+                size: 18.0,
                 ),
-                SizedBox(height: 15.0),
-                Divider(),
-              ]),
-                    ],
-                );
+              ],
+              ),
+          ),
+                ],
+              ),
+          ],
+                    ),
+                  ),
+                  SizedBox(height: 15.0),
+                  Divider(),
+                ]),
+          ],
+                  );
          }
       );
   }
@@ -197,6 +218,7 @@ GlobalKey _stockBottomSheetKey = GlobalKey();
                 ListTile(
                   onTap: () {
                     _showBottomSheet(context, post.companyname, post.exchange, post.symbol);
+                    // _afterLayout();
                   },
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -365,6 +387,8 @@ GlobalKey _stockBottomSheetKey = GlobalKey();
 
   }
 }
+
+
 
 
 
