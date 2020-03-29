@@ -1,6 +1,8 @@
 
 
 // Packages
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:stockrails_001/classes.dart';
 import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
@@ -19,10 +21,26 @@ import 'dart:convert';
 
 /*........................................... Program ......................................*/
 
+//Variables
 String companyName;
 String exchange;
 String symbol;
 
+//Colours
+const blue1 = const Color(0xFF517CD3);
+const blue2 = const Color(0xFF5B8AEA);
+const blue3 = const Color(0xFF6292F3);
+const blue4 = const Color(0xFF7BA7FF);
+const blue5 = const Color(0xFFC5D8FF);
+const green6 = const Color(0xFF89B78A);
+const grey7 = const Color(0xFF373B49);
+const grey8 = const Color(0xFF454A5C);
+const grey9 = const Color(0xFF3E4251);
+const grey10 = const Color(0xFF656C84);
+const grey11 = const Color(0xFF6C748F);
+const grey12 = const Color(0xFFD0D0D0);
+const white13 = const Color(0xFFFFFFFF);
+const red14 = const Color(0xFFC95C5C);
 
 
 
@@ -34,44 +52,7 @@ class Search extends StatefulWidget {
 }
 
 
-
-
-
-
 class _SearchState extends State<Search> {
-
-
-
-//Defines initial radius and key
-// final GlobalKey _stockBottomSheetKey = GlobalKey();
-
-// Size _stockBottomSheetSize;
-// Offset _stockBottomSheetPosition;
-
-BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
-
-
-
-
-
-// @override
-// void initState() {
-// super.initState();
-// WidgetsBinding.instance.addPostFrameCallback((_) => _afterLayout());
-// }
-
-// _afterLayout() {
-//     RenderBox _stockBottomSheetRenderBox = _stockBottomSheetKey.currentContext.findRenderObject();
-//     _stockBottomSheetSize = _stockBottomSheetRenderBox.size;
-//     _stockBottomSheetPosition = _stockBottomSheetRenderBox.localToGlobal(Offset.zero);
-//     print(_stockBottomSheetPosition);
-//     print(_stockBottomSheetSize);
-// }
-
-
-
-
-
 
 //-------------------------------------------------- Bottom Sheet Card
   
@@ -80,7 +61,7 @@ BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
         context: (context),
         isScrollControlled: false,
         shape: RoundedRectangleBorder(
-        borderRadius: _stockSheetBorderRadius,
+        borderRadius: BorderRadius.circular(15.25),
         ),
         builder: (BuildContext context){
 //-------------------------------------------------- Rounded Corners & Card
@@ -186,7 +167,64 @@ BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
                     ),
                   ),
                   SizedBox(height: 15.0),
-                  Divider(),
+//-------------------------------------------------- Divider ----------------------------------------------
+                Divider(),
+
+//-------------------------------------------------- Alert section tool bar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  child: Column(children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                      Text(
+                        'Alerts'.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black, 
+                        ),
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                          Container(width: 30.0, padding: EdgeInsets.all(0.0), child: IconButton(onPressed: () {}, icon: Icon(Icons.create))),
+                          Container(width: 30.0, padding: EdgeInsets.all(0.0), child: IconButton(onPressed: () {}, icon: Icon(Icons.add))),
+                        ],),
+                      )
+                    ],)
+                  ],),
+                ),
+
+//-------------------------------------------------- New alert add button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                    child: FlatButton(
+                    onPressed: () {},
+                    color: grey7,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.add, color: grey10,),
+                          SizedBox(height: 10.0),
+                          Text(
+                            'New Alert'.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              color: grey10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                      ),
+                  ),
                 ]),
           ],
                   );
@@ -195,17 +233,13 @@ BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
   }
 
 
-
-
-
+//-------------------------------------------------- Page
   @override
   Widget build(BuildContext context) {
-
 
     return Scaffold(
     body: Stack(
     children: <Widget>[
-
     SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -335,6 +369,7 @@ BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
                     ],
                   ),
                 ),
+//-------------------------------------------------- Divider ----------------------------------------------
                 Divider(),
               ],
             );
@@ -387,9 +422,6 @@ BorderRadiusGeometry _stockSheetBorderRadius = BorderRadius.circular(0.0);
 
   }
 }
-
-
-
 
 
 /*........................................... Program ......................................*/
