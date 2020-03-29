@@ -201,7 +201,9 @@ class _SearchState extends State<Search> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                     child: FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/notifier');
+                    },
                     color: grey7,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
                     child: Padding(
