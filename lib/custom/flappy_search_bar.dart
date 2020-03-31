@@ -1,13 +1,21 @@
+//Library
 library flappy_search_bar;
 
+//Dart Files
 import 'dart:async';
 
+//Packages
 import 'package:async/async.dart';
 import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+//Dependencies
 import 'search_bar_style.dart';
+
+//Global Data
+// import 'package:stockrails_001/data.dart';
+
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
   void onListChanged(List<T> items) {}
@@ -200,10 +208,11 @@ class SearchBar<T> extends StatefulWidget {
   /// Set a padding on the list
   final EdgeInsetsGeometry listPadding;
 
+
   SearchBar({
     Key key,
-    @required this.onSearch,
-    @required this.onItemFound,
+    this.onSearch,
+    this.onItemFound,
     this.searchBarController,
     this.minimumChars = 3,
     this.debounceDuration = const Duration(milliseconds: 500),
@@ -239,6 +248,10 @@ class SearchBar<T> extends StatefulWidget {
 
 class _SearchBarState<T> extends State<SearchBar<T>>
     with TickerProviderStateMixin, _ControllerListener<T> {
+  /// Focus determiner
+  FocusNode focusNodeCancel = new FocusNode();
+  bool focusPass;
+
   bool _loading = false;
   Widget _error;
   final _searchQueryController = TextEditingController();
@@ -250,9 +263,15 @@ class _SearchBarState<T> extends State<SearchBar<T>>
   @override
   void initState() {
     super.initState();
-    searchBarController =
-        widget.searchBarController ?? SearchBarController<T>();
+    searchBarController = widget.searchBarController ?? SearchBarController<T>();
     searchBarController.setListener(this);
+    focusNodeCancel.addListener(onFocusChange);
+  }
+
+  void onFocusChange(){
+    debugPrint("Focus: " + focusNodeCancel.hasFocus.toString());
+    focusPass = focusNodeCancel.hasFocus;
+    debugPrint("focusPass: " + focusPass.toString());
   }
 
   @override
@@ -355,77 +374,101 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     }
   }
 
+//-------------------------------------------------- Built Widget --------------------------------- //
   @override
   Widget build(BuildContext context) {
     final widthMax = MediaQuery.of(context).size.width;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: widget.searchBarPadding,
-          child: Container(
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+    return Stack(
+          children: <Widget>[
+            AnimatedOpacity(
+              opacity: _animate ? 1.0 : 0,
+              curve: Curves.easeInOut,
+              duration: Duration(milliseconds: _animate ? 300 : 0),
+//-------------------------------------------------- Fade-in Background ⤵
+              child: Container(
+                  alignment: Alignment.center,
+                  //Change
+                  color: Colors.grey[300],
+                ),
+            ),
+
+            SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Flexible(
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    width: _animate ? widthMax * .8 : widthMax,
-                    decoration: BoxDecoration(
-                      borderRadius: widget.searchBarStyle.borderRadius,
-                      color: widget.searchBarStyle.backgroundColor,
-                    ),
-                    child: Padding(
-                      padding: widget.searchBarStyle.padding,
-                      child: Theme(
-                        child: TextField(
-                          controller: _searchQueryController,
-                          onChanged: _onTextChanged,
-                          style: widget.textStyle,
-                          decoration: InputDecoration(
-                            icon: widget.icon,
-                            border: InputBorder.none,
-                            hintText: widget.hintText,
-                            hintStyle: widget.hintStyle,
+                Padding(
+                  padding: widget.searchBarPadding,
+                  child: Container(
+                    height: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Flexible(
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 200),
+                            width: _animate ? widthMax * .8 : widthMax,
+                            decoration: BoxDecoration(
+                              borderRadius: widget.searchBarStyle.borderRadius,
+                              color: widget.searchBarStyle.backgroundColor,
+                            ),
+                            child: Padding(
+                              padding: widget.searchBarStyle.padding,
+                              child: Theme(
+                                child: TextField(
+                                  textInputAction: TextInputAction.search,
+                                  focusNode: focusNodeCancel,
+                                  controller: _searchQueryController,
+                                  onChanged: _onTextChanged,
+                                  style: widget.textStyle,
+                                  decoration: InputDecoration(
+                                    icon: widget.icon,
+                                    border: InputBorder.none,
+                                    hintText: widget.hintText,
+                                    hintStyle: widget.hintStyle,
+                                  ),
+                                ),
+                                data: Theme.of(context).copyWith(
+                                  primaryColor: widget.iconActiveColor,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                        data: Theme.of(context).copyWith(
-                          primaryColor: widget.iconActiveColor,
+                        GestureDetector(
+                          onTap: _cancel,
+                          child: AnimatedOpacity(
+                            opacity: _animate ? 1.0 : 0,
+                            curve: Curves.easeIn,
+                            duration: Duration(milliseconds: _animate ? 1000 : 0),
+                            child: AnimatedContainer(
+                              duration: Duration(milliseconds: 200),
+                              width:
+                                  _animate ? MediaQuery.of(context).size.width * .2 : 0,
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Center(
+                                  child: widget.cancellationWidget,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: _cancel,
-                  child: AnimatedOpacity(
-                    opacity: _animate ? 1.0 : 0,
-                    curve: Curves.easeIn,
-                    duration: Duration(milliseconds: _animate ? 1000 : 0),
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      width:
-                          _animate ? MediaQuery.of(context).size.width * .2 : 0,
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Center(
-                          child: widget.cancellationWidget,
-                        ),
-                      ),
-                    ),
-                  ),
+                Padding(
+                  padding: widget.headerPadding,
+                  child: widget.header ?? Container(),
+                ),
+                Expanded(
+                  child: _buildContent(context),
                 ),
               ],
-            ),
           ),
-        ),
-        Padding(
-          padding: widget.headerPadding,
-          child: widget.header ?? Container(),
-        ),
-        Expanded(
-          child: _buildContent(context),
+            ),
         ),
       ],
     );

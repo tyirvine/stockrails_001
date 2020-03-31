@@ -25,4 +25,3 @@ static const white13 = const Color(0xFFFFFFFF);
 static const red14 = const Color(0xFFC95C5C);
 
 }
-
