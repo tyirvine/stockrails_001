@@ -10,12 +10,15 @@ import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
 
 // Dependencies
 import 'package:http/http.dart' as http;
-import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:stockrails_001/custom/flappy_search_bar.dart';
 
 
 // Dart Files
 import 'dart:async';
 import 'dart:convert';
+
+//Global Data
+import 'package:stockrails_001/data.dart';
 
 
 
@@ -25,25 +28,6 @@ import 'dart:convert';
 String companyName;
 String exchange;
 String symbol;
-
-//Colours
-const blue1 = const Color(0xFF517CD3);
-const blue2 = const Color(0xFF5B8AEA);
-const blue3 = const Color(0xFF6292F3);
-const blue4 = const Color(0xFF7BA7FF);
-const blue5 = const Color(0xFFC5D8FF);
-const green6 = const Color(0xFF89B78A);
-const grey7 = const Color(0xFF373B49);
-const grey8 = const Color(0xFF454A5C);
-const grey9 = const Color(0xFF3E4251);
-const grey10 = const Color(0xFF656C84);
-const grey11 = const Color(0xFF6C748F);
-const grey12 = const Color(0xFFD0D0D0);
-const white13 = const Color(0xFFFFFFFF);
-const red14 = const Color(0xFFC95C5C);
-
-
-
 
 
 class Search extends StatefulWidget {
@@ -204,7 +188,7 @@ class _SearchState extends State<Search> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/notifier');
                     },
-                    color: grey7,
+                    color: Colours.grey7,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
                     child: Padding(
                       padding: const EdgeInsets.all(25.0),
@@ -212,14 +196,14 @@ class _SearchState extends State<Search> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Icon(Icons.add, color: grey10,),
+                          Icon(Icons.add, color: Colours.grey10,),
                           SizedBox(height: 10.0),
                           Text(
                             'New Alert'.toUpperCase(),
                             style: TextStyle(
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
-                              color: grey10,
+                              color: Colours.grey10,
                             ),
                           ),
                         ],
@@ -240,145 +224,162 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+    backgroundColor: Colors.yellow,
     body: Stack(
     children: <Widget>[
+//-------------------------------------------------- Underlying Content
+    Container(
+      alignment: Alignment.center,
+      child: Text('Test'),
+    ),  
+
+//-------------------------------------------------- Search Bar
     SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: SearchBar<StockSearch>(
-          onSearch: getStockSearch,
-          onItemFound: (StockSearch post, int index) {
-              return Column(
-              children: <Widget>[
-//-------------------------------------------------- List Stock Tile
-                ListTile(
-                  onTap: () {
-                    _showBottomSheet(context, post.companyname, post.exchange, post.symbol);
-                    // _afterLayout();
-                  },
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: FocusScope(
+            child: Focus(
+              onFocusChange: (focus) => print("focus: $focus"),
+              child: SearchBar<StockSearch>(
+              onSearch: getStockSearch,
+              onItemFound: (StockSearch post, int index) {
+                  return Container(
+                    color: Colors.orange,
+                    child: Column(
                     children: <Widget>[
-                      Flexible( //Ticker, Exchange, and Name
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+//-------------------------------------------------- List Stock Tile
+                      ListTile(
+                        onTap: () {
+                          _showBottomSheet(context, post.companyname, post.exchange, post.symbol);
+                          // _afterLayout();
+                        },
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
+                            Flexible( //Ticker, Exchange, and Name
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
 //-------------------------------------------------- Symbol & Exchange!
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                
-                                Text(post.symbol), //Symbol
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      
+                                      Text(post.symbol), //Symbol
 
-                                SizedBox(width: 5.0), //Spacer
+                                      SizedBox(width: 5.0), //Spacer
 
 //-------------------------------------------------- Exchange!
-                                Expanded(
-                                  child: Text( //Exchange
-                                    post.exchange,
-                                    style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                                      Expanded(
+                                        child: Text( //Exchange
+                                          post.exchange,
+                                          style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                                          overflow: TextOverflow.fade,
+                                          maxLines: 1,
+                                          softWrap: false,
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+
+//-------------------------------------------------- Company Name!
+                                  Text(
+                                    post.companyname,
                                     overflow: TextOverflow.fade,
                                     maxLines: 1,
                                     softWrap: false,
-                                  ),
-                                ),
+                                  ), //Company Name
 
-                              ],
+                                ],
+                              ),
                             ),
+                            Flexible(
+//-------------------------------------------------- Price & Change! 
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
 
-//-------------------------------------------------- Company Name!
-                            Text(
-                              post.companyname,
-                              overflow: TextOverflow.fade,
-                              maxLines: 1,
-                              softWrap: false,
-                            ), //Company Name
+                                  Text(post.latestprice.toString().replaceAll('null', '')), //Stock Price!
 
+                                  SizedBox(height: 2.0), //Spacer
+
+
+                                  if(post.changeRendered != 'null')
+                                  
+                                  if(post.changeRendered > 0) //Positive Change!
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.lightGreen,
+                                        borderRadius: BorderRadius.circular(2.0),
+                                      ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                      child: Text(
+                                        post.change.toString().replaceAll('null', ''),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13.0,
+                                          ),
+                                      ),
+                                    ))
+
+                                  else if(post.changeRendered < 0) //Negative Change!
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(2.0),
+                                      ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                      child: Text(
+                                        post.change.toString().replaceAll('null', ''),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13.0,
+                                          ),
+                                      ),
+                                    ))
+
+                                  else if(post.changeRendered == 0) //Negative Change!
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(2.0),
+                                      ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
+                                      child: Text(
+                                        post.change.toString().replaceAll('null', ''),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13.0,
+                                          ),
+                                      ),
+                                    )),
+
+
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
-                      Flexible(
-//-------------------------------------------------- Price & Change! 
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-
-                            Text(post.latestprice.toString().replaceAll('null', '')), //Stock Price!
-
-                            SizedBox(height: 2.0), //Spacer
-
-
-                            if(post.changeRendered != 'null')
-                            
-                            if(post.changeRendered > 0) //Positive Change!
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.lightGreen,
-                                  borderRadius: BorderRadius.circular(2.0),
-                                ),
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
-                                child: Text(
-                                  post.change.toString().replaceAll('null', ''),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13.0,
-                                    ),
-                                ),
-                              ))
-
-                            else if(post.changeRendered < 0) //Negative Change!
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(2.0),
-                                ),
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
-                                child: Text(
-                                  post.change.toString().replaceAll('null', ''),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13.0,
-                                    ),
-                                ),
-                              ))
-
-                            else if(post.changeRendered == 0) //Negative Change!
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(2.0),
-                                ),
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(6.0, 2.0, 4.0, 2.0),
-                                child: Text(
-                                  post.change.toString().replaceAll('null', ''),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13.0,
-                                    ),
-                                ),
-                              )),
-
-
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
 //-------------------------------------------------- Divider ----------------------------------------------
-                Divider(),
-              ],
-            );
-          },
+                      Divider(),
+                    ],
+                ),
+                  );
+              },
+          ),
+            ),
         ),
       ),
-    ),  
+    ),
+
         ]),
       );
   }
