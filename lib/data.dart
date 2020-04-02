@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 
 /*........................................... Program ......................................*/
 
+//Colours : for the entire project
 class Colours {
 
-  //Colours
 static const blue1 = const Color(0xFF517CD3);
 static const blue2 = const Color(0xFF5B8AEA);
 static const blue3 = const Color(0xFF6292F3);
@@ -26,20 +26,16 @@ static const red14 = const Color(0xFFC95C5C);
 
 }
 
-
-class Navigation {
-  
-  int pageCount = 1;
-
-}
-
-class AppData {
-  static final AppData _appData = new AppData._internal();
+//Navigation Data : for the notifier creation menu
+class NotifierNavigation {
+  static final NotifierNavigation _notifierNavigationData = new NotifierNavigation._internal();
   
   int text = 0;
-  factory AppData() {
-    return _appData;
+  factory NotifierNavigation() {
+    return _notifierNavigationData;
   }
-  AppData._internal();
+  NotifierNavigation._internal();
 }
-final appData = AppData();
+
+//Initialization for notifier navigation data
+final notifierNavigationData = NotifierNavigation();

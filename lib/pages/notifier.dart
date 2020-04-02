@@ -19,7 +19,7 @@ class Notifier extends StatefulWidget {
 
 class _NotifierState extends State<Notifier> {
 
-  Navigation navigation;
+  NotifierNavigation navigation;
 
   _NotifierState({this.navigation});
 
@@ -158,8 +158,8 @@ class _NotifierState extends State<Notifier> {
 
                                   IconButton(
                                     onPressed: () {
-                                      appData.text += 1;
-                                      print(appData.text);
+                                      notifierNavigationData.text += 1;
+                                      print(notifierNavigationData.text);
                                     },
                                     icon: Icon(Icons.arrow_back_ios, color: Colours.white13,),
                                   ),
