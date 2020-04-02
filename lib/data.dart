@@ -25,3 +25,21 @@ static const white13 = const Color(0xFFFFFFFF);
 static const red14 = const Color(0xFFC95C5C);
 
 }
+
+
+class Navigation {
+  
+  int pageCount = 1;
+
+}
+
+class AppData {
+  static final AppData _appData = new AppData._internal();
+  
+  int text = 0;
+  factory AppData() {
+    return _appData;
+  }
+  AppData._internal();
+}
+final appData = AppData();

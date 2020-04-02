@@ -3,15 +3,15 @@
 // Packages
 import 'dart:ui';
 
+//Pages
 import 'package:flutter/material.dart';
 import 'package:stockrails_001/classes.dart';
 import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
-
+// import 'package:stockrails_001/pages/notifier.dart';
 
 // Dependencies
 import 'package:http/http.dart' as http;
 import 'package:stockrails_001/custom/flappy_search_bar.dart';
-
 
 // Dart Files
 import 'dart:async';
@@ -43,8 +43,6 @@ class Search extends StatefulWidget {
 
 
 class _SearchState extends State<Search> {
-
-// FocusNode _focusNode = SearchBar();
 
 //-------------------------------------------------- Bottom Sheet Card
   
@@ -189,12 +187,17 @@ class _SearchState extends State<Search> {
                   ],),
                 ),
 
+
 //-------------------------------------------------- New alert add button
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                     child: FlatButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/notifier');
+                      Navigator.of(context).pushNamed( '/notifier', arguments: {
+                        'symbol': symbol,
+                        'companyname': companyName,
+                        'exchange': exchange,
+                      });
                     },
                     color: Colours.grey7,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),

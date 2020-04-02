@@ -249,9 +249,6 @@ class SearchBar<T> extends StatefulWidget {
 class _SearchBarState<T> extends State<SearchBar<T>>
     with TickerProviderStateMixin, _ControllerListener<T> {
   /// Focus determiner
-  FocusNode focusNodeCancel = new FocusNode();
-  bool focusPass;
-
   bool _loading = false;
   Widget _error;
   final _searchQueryController = TextEditingController();
@@ -265,14 +262,8 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     super.initState();
     searchBarController = widget.searchBarController ?? SearchBarController<T>();
     searchBarController.setListener(this);
-    focusNodeCancel.addListener(onFocusChange);
   }
 
-  void onFocusChange(){
-    debugPrint("Focus: " + focusNodeCancel.hasFocus.toString());
-    focusPass = focusNodeCancel.hasFocus;
-    debugPrint("focusPass: " + focusPass.toString());
-  }
 
   @override
   void onListChanged(List<T> items) {
@@ -418,7 +409,6 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                               child: Theme(
                                 child: TextField(
                                   textInputAction: TextInputAction.search,
-                                  focusNode: focusNodeCancel,
                                   controller: _searchQueryController,
                                   onChanged: _onTextChanged,
                                   style: widget.textStyle,
