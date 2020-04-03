@@ -30,7 +30,7 @@ static const red14 = const Color(0xFFC95C5C);
 class NotifierNavigation {
   static final NotifierNavigation _notifierNavigationData = new NotifierNavigation._internal();
   
-  int text = 0;
+  int pageCount = 0;
   factory NotifierNavigation() {
     return _notifierNavigationData;
   }
