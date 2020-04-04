@@ -1,13 +1,14 @@
 
 
 //Flutter SDK
-import 'dart:js';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 //Global Data
 import 'package:stockrails_001/data.dart';
+
+//Pages
+import 'package:stockrails_001/custom/picker.dart' as my;
 
 
 /*........................................... Program ......................................*/
@@ -44,6 +45,7 @@ class _NotifierState extends State<Notifier> {
   //Program
   @override
   Widget build(BuildContext context) {
+    
     
     //Symbol data from search.dart
     data = ModalRoute.of(context).settings.arguments;
@@ -138,7 +140,7 @@ class _NotifierState extends State<Notifier> {
                               ],),
                           ),
 
-                          SizedBox(height: 150.0,),
+                          Spacer(flex: 2),
 
 //-------------------------------------------------- Notifier Menu Panel Stack
                           
@@ -151,51 +153,121 @@ class _NotifierState extends State<Notifier> {
                                 child: AnimatedOpacity(
                                   opacity: animateNotifierPage0 ? 1.0 : 0.0,
                                   duration: Duration(milliseconds: 250),
-                                  child: Column( children: <Widget>[
+                                  child: Container(
+                                    height: 450.0,
+                                    child: Column( children: <Widget>[
                                       Padding(
-                                      padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                                      child: Row(children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 2.0),
-                                          child: Text(
-                                            'Choose Chart Interval'.toUpperCase(),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              letterSpacing: 1.0,
-                                              color: Colours.white13,
+                                        padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                                        child: Row(children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 2.0),
+                                            child: Text(
+                                              'Choose Chart Interval'.toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: 1.0,
+                                                color: Colours.white13,
+                                              ),
+                                              ),
+                                          ),
+                                        ]),
+                                      ),
+                                      Divider(color: Colours.blue4,),
+
+//-------------------------------------------------- Cupertino Picker
+
+                                      Container(
+                                        height: 305.0,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            
+                                            Container(
+                                              alignment: Alignment.center,
+                                              height: 275.0,
+                                              width: 100.0,
+                                              child: CupertinoTheme(
+                                                data: CupertinoThemeData(
+                                                  textTheme: CupertinoTextThemeData(
+                                                    //Styling
+                                                    pickerTextStyle: TextStyle(
+                                                      color: Colours.white13,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 50.0
+                                                    )
+                                                  )
+                                                ),
+                                                child: my.CupertinoPicker(
+                                                  backgroundColor: Color(0xFF5b8aea),
+                                                  magnification: 0.9,
+                                                  diameterRatio: 3.0,
+                                                  itemExtent: 85.0,
+                                                  onSelectedItemChanged: (int i) { print(i); },
+                                                  children: <Widget> [
+                                                    Center(child: Text('1')),
+                                                    Center(child: Text('2')),
+                                                    Center(child: Text('3')),
+                                                    Center(child: Text('4')),
+                                                    Center(child: Text('5')),
+                                                    Center(child: Text('6')),
+                                                    Center(child: Text('7')),
+                                                    Center(child: Text('8')),
+                                                    Center(child: Text('9')),
+                                                    Center(child: Text('10')),
+                                                ],),
+                                              ),
                                             ),
+
+                                            Container(
+                                              height: 60.0,
+                                              child: VerticalDivider(color: Colours.blue4),
+                                              ),
+
+                                            Container(
+                                              alignment: Alignment.center,
+                                              height: 300.0,
+                                              width: 100.0,
+                                              child: CupertinoTheme(
+                                                data: CupertinoThemeData(
+                                                  textTheme: CupertinoTextThemeData(
+                                                    //Styling
+                                                    pickerTextStyle: TextStyle(
+                                                      color: Colours.white13,
+                                                      fontWeight: FontWeight.w300,
+                                                      fontSize: 20.0
+                                                    )
+                                                  )
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                                                  child: my.CupertinoPicker(
+                                                    backgroundColor: Color(0xFF5b8aea),
+                                                    magnification: 0.5,
+                                                    diameterRatio: 3.0,
+                                                    itemExtent: 50.0,
+                                                    onSelectedItemChanged: (int i) { print(i); },
+                                                    children: <Widget> [
+                                                      Align(alignment: Alignment.centerLeft, child: Text('Hours')),
+                                                      Align(alignment: Alignment.centerLeft, child: Text('Days')),
+                                                      Align(alignment: Alignment.centerLeft, child: Text('Weeks')),
+                                                      Align(alignment: Alignment.centerLeft, child: Text('Months')),
+                                                  ],),
+                                                ),
+                                              ),
                                             ),
+
+                                          
+                                          
+                                          ],
                                         ),
-                                      ]),
-                                    ),
-                                    Divider(color: Colours.blue4,),
-                                    Container(
-                                      alignment: Alignment.center,
-                                      color: Colors.green,
-                                      child: Text('Page 0'),
-                                    ),
-                                    FlatButton(onPressed: () {print('Operating');}, child: Text('Test')),
-                                    
+                                      )
 
-                                    Container(
-                                      height: 300.0,
-                                      width: 300.0,
-                                      child: CupertinoPicker(
-                                        onSelectedItemChanged: (int index) {  
-                                        print('$index');
-                                        },
-                                        diameterRatio: 1.1,
-                                        itemExtent: 50.0,
-                                        children: <Widget>[
-                                          Text('Option 1'),
-                                          Text('Option 2'),
-                                          Text('Option 3'),
-                                      ]),
-                                    ),
+                                      
 
 
-                                  ]),
+                                    ]),
+                                  ),
                                 ),
                               ),
 
