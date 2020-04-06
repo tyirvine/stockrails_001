@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 /*........................................... Program ......................................*/
 
+
+
 //Colours : for the entire project
 class Colours {
 
@@ -25,6 +27,8 @@ static const white13 = const Color(0xFFFFFFFF);
 static const red14 = const Color(0xFFC95C5C);
 
 }
+
+
 
 //Navigation Data : for the notifier creation menu
 class NotifierNavigation {
