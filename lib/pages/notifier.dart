@@ -12,6 +12,7 @@ import 'package:stockrails_001/data.dart';
 import 'package:stockrails_001/custom/picker.dart' as my;
 
 
+
 /*........................................... Program ......................................*/
 
 
@@ -755,6 +756,8 @@ class _NotifierState extends State<Notifier> {
                                           setState(() {
                                             animateFinishButton = true;
                                           });
+
+
                                         }
 
                                         notifierPageSet();
