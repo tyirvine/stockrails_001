@@ -4,6 +4,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'dart:async';
+
 
 class Notifier {
 
@@ -41,12 +43,10 @@ class Notifier {
 }
 
 
-class NotifierDatabase {
 
     void main() async {
 
-    //Opens Connection To Database
-    final Future<Database> notifierdatabase = openDatabase(
+    final notifierdatabase =  openDatabase(
 
       //Opens Connection
       join(await getDatabasesPath(), 'notifier_database.db'),
@@ -62,6 +62,7 @@ class NotifierDatabase {
       version: 1,
 
       );
+    
 
     //A method to insert notifiers into the database
     Future<void> insertNotifier(Notifier notifier) async {
@@ -102,8 +103,8 @@ class NotifierDatabase {
       );
     }
 
-    //Prints out queried data
-    print(await notifiers());
+    // //Prints out queried data
+    // print(await notifiers());
 
     Future<void> deleteNotifier(int id) async {
 
@@ -125,8 +126,8 @@ class NotifierDatabase {
       );
     }
 
-    //Delete this
-    print(deleteNotifier(0).toString());
+    // //Delete this
+    // print(deleteNotifier(0).toString());
 
     //Sample Data
     final aapl = Notifier(
@@ -139,10 +140,9 @@ class NotifierDatabase {
       page3Data: 0,
     );
 
-    await insertNotifier(aapl);
 
     }
-}
+
 
 
 
@@ -153,8 +153,8 @@ class NotifierDatabaseHelper {
   
 /* Data goes below ⤵ -----------------------------------------------------> */
 
+
   read() async {
-    NotifierDatabase helper;
       print(null);
   }
 
