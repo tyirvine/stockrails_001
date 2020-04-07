@@ -39,7 +39,7 @@ class Notifier {
     //Fourth Page Data
     int page3Data;
 
-    Notifier();
+    Notifier({this.id, this.page0NumberData, this.page0UnitData, this.page1Data, this.page2InputData, this.page2UnitData, this.page3Data});
 
     Notifier.fromMap(Map<String, dynamic> map) {
       id = map[columnId];
@@ -69,7 +69,7 @@ class Notifier {
 
 
 
-    // singleton class to manage the database
+  //Singleton class to manage the database
     class DatabaseHelper {
 
       // This is the actual database filename that is saved in the docs directory.
@@ -105,8 +105,12 @@ class Notifier {
         await db.execute('''
               CREATE TABLE $tableNotifiers (
                 $columnId INTEGER PRIMARY KEY,
-                $columnPage0NumberData INTEGER NOT NULL,
-                $columnPage0UnitData INTEGER NOT NULL,
+                $columnPage0NumberData INTEGER,
+                $columnPage0UnitData INTEGER,
+                $columnPage1Data INTEGER,
+                $columnPage2InputData INTEGER,
+                $columnPage2UnitData INTEGER,
+                $columnPage3Data INTEGER,
               )
               ''');
       }
@@ -119,23 +123,54 @@ class Notifier {
         return id;
       }
 
+
+//-------------------------------------------------- Queries all notifiers in database !
+
+      Future<List<Notifier>> queryAllNotifiers() async {
+        Database db = await database;
+        List<Map> maps = await db.query(tableNotifiers);
+
+        //This will return all entities if the database is filled
+        if (maps.length > 0) {
+          return List.generate(maps.length, (i) {
+            return Notifier(
+              id: maps[i][columnId],
+              page0NumberData: maps[i][columnPage0NumberData],
+              page0UnitData: maps[i][columnPage0UnitData],
+              page1Data: maps[i][columnPage1Data],
+              page2InputData: maps[i][columnPage2InputData],
+              page2UnitData: maps[i][columnPage2UnitData],
+              page3Data: maps[i][columnPage3Data],
+            );
+          });
+        }
+
+        //This will return null if the database is empty
+        return null;
+      }
+
+
+
+//-------------------------------------------------- Queries one notifier !
+
       Future<Notifier> queryNotifier(int id) async {
         Database db = await database;
         List<Map> maps = await db.query(tableNotifiers,
             columns: [columnId, columnPage0NumberData, columnPage0UnitData, columnPage1Data, columnPage2InputData, columnPage2UnitData, columnPage3Data],
             where: '$columnId = ?',
-            whereArgs: [id]);
+            whereArgs: [id],
+        );
+
+        //This will return an entity if the database is filled
         if (maps.length > 0) {
           return Notifier.fromMap(maps.first);
         }
+
+        //This will return null if there are no items in the database
         return null;
       }
 
     }
-
-
-
-
 
 
 
@@ -147,8 +182,10 @@ class NotifierDatabaseHelper {
   
 /* Data goes below ⤵ -----------------------------------------------------> */
 
-  String text;
-
+  read() {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    print(helper.queryAllNotifiers());
+  }
 
 /* Data ⤴ ----------------------------------------------------------------> */
   

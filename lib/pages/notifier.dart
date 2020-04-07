@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 //Global Data
 import 'package:stockrails_001/data.dart';
+import 'package:stockrails_001/storage/saves.dart';
 
 //Pages
 import 'package:stockrails_001/custom/picker.dart' as my;
@@ -27,6 +28,7 @@ class _NotifierState extends State<Notifier> {
 
   //Notifier Data
   NotifierNavigation navigation;
+  NotifierDatabaseHelper database;
   NotifierData notifier;
 
 
@@ -755,6 +757,7 @@ class _NotifierState extends State<Notifier> {
                                         if(notifierNavigationData.pageCount == 3) {
                                           setState(() {
                                             animateFinishButton = true;
+                                            notifierHelperData.read();
                                           });
 
 
