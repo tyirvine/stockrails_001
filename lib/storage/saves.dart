@@ -140,3 +140,6 @@ final aapl = Notifier(
 await insertNotifier(aapl);
 
 }
+
+
+

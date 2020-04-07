@@ -682,6 +682,9 @@ class _NotifierState extends State<Notifier> {
                                           ),
                                       ),
 
+                                      SizedBox(height: 10.0),
+
+                                      RaisedButton(onPressed: () {}, child: Text('Read')),
 
                                       SizedBox(height: 10.0),
 
