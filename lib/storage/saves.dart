@@ -41,105 +41,130 @@ class Notifier {
 }
 
 
-void main() async {
+class NotifierDatabase {
 
-//Opens Connection To Database
-final Future<Database> notifierdatabase = openDatabase(
+    void main() async {
 
-  //Opens Connection
-  join(await getDatabasesPath(), 'notifier_database.db'),
-  
-  //Creates Table
-  onCreate: (db, version) {
-    return db.execute(
-      "CREATE TABLE notifiers(id INTEGER PRIMARY KEY, notifierPage0NumberData INTEGER, notifierPage0UnitData INTEGER, notifierPage1Data INTEGER, notifierPage2UnitData INTEGER, notifierPage2InputData INTEGER, notifierPage3Data INTEGER)",
+    //Opens Connection To Database
+    final Future<Database> notifierdatabase = openDatabase(
+
+      //Opens Connection
+      join(await getDatabasesPath(), 'notifier_database.db'),
+      
+      //Creates Table
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE notifiers(id INTEGER PRIMARY KEY, notifierPage0NumberData INTEGER, notifierPage0UnitData INTEGER, notifierPage1Data INTEGER, notifierPage2UnitData INTEGER, notifierPage2InputData INTEGER, notifierPage3Data INTEGER)",
+          );
+        },
+
+      //For Upgrading and Downgrading  
+      version: 1,
+
       );
-    },
 
-  //For Upgrading and Downgrading  
-  version: 1,
+    //A method to insert notifiers into the database
+    Future<void> insertNotifier(Notifier notifier) async {
 
-  );
+      //References Database
+      final Database db = await notifierdatabase;
 
-//A method to insert notifiers into the database
-Future<void> insertNotifier(Notifier notifier) async {
+      //Replaces Data
+      await db.insert(
+        'notifiers',
+        notifier.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      
+    }
 
-  //References Database
-  final Database db = await notifierdatabase;
+    //A method to list out all the data
+    Future<List<Notifier>> notifiers() async {
 
-  //Replaces Data
-  await db.insert(
-    'notifiers',
-    notifier.toMap(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
-  
-}
+      //Reference the main database
+      final Database db = await notifierdatabase;
 
-//A method to list out all the data
-Future<List<Notifier>> notifiers() async {
+      //Query all the data
+      final List<Map<String, dynamic>> notifierMaps = await db.query('notifiers');
 
-  //Reference the main database
-  final Database db = await notifierdatabase;
-
-  //Query all the data
-  final List<Map<String, dynamic>> notifierMaps = await db.query('notifiers');
-
-  //Translate map into Notifier
-  return List.generate(notifierMaps.length, (i) {
-    return Notifier(
-        id: notifierMaps[i]['id'],
-        page0NumberData: notifierMaps[i]['page0NumberData'],
-        page0UnitData: notifierMaps[i]['page0UnitData'],
-        page1Data: notifierMaps[i]['page1Data'],
-        page2InputData: notifierMaps[i]['page2InputData'],
-        page2UnitData: notifierMaps[i]['page2UnitData'],
-        page3Data: notifierMaps[i]['page3Data'],
+      //Translate map into Notifier
+      return List.generate(notifierMaps.length, (i) {
+        return Notifier(
+            id: notifierMaps[i]['id'],
+            page0NumberData: notifierMaps[i]['page0NumberData'],
+            page0UnitData: notifierMaps[i]['page0UnitData'],
+            page1Data: notifierMaps[i]['page1Data'],
+            page2InputData: notifierMaps[i]['page2InputData'],
+            page2UnitData: notifierMaps[i]['page2UnitData'],
+            page3Data: notifierMaps[i]['page3Data'],
+          );
+        }
       );
     }
-  );
+
+    //Prints out queried data
+    print(await notifiers());
+
+    Future<void> deleteNotifier(int id) async {
+
+      //Reference database
+      final db = await notifierdatabase;
+
+      //Removes notifier
+      await db.delete(
+        
+        //Finds table
+        'notifiers',
+
+        //Use a where clause to find a specific notifier
+        where:  "id = ?",
+
+        //This passes the notifier's id to find the specific one
+        whereArgs: [id],
+
+      );
+    }
+
+    //Delete this
+    print(deleteNotifier(0).toString());
+
+    //Sample Data
+    final aapl = Notifier(
+      id: 0,
+      page0NumberData: 2,
+      page0UnitData: 1,
+      page1Data: 0,
+      page2InputData: 1,
+      page2UnitData: 1,
+      page3Data: 0,
+    );
+
+    await insertNotifier(aapl);
+
+    }
 }
 
-//Prints out queried data
-print(await notifiers());
 
-Future<void> deleteNotifier(int id) async {
 
-  //Reference database
-  final db = await notifierdatabase;
+//Carrier for the read() and save() methods
+class NotifierDatabaseHelper {
+  
+  static final NotifierDatabaseHelper _notifierHelperData = new NotifierDatabaseHelper._internal();
+  
+/* Data goes below ⤵ -----------------------------------------------------> */
 
-  //Removes notifier
-  await db.delete(
-    
-    //Finds table
-    'notifiers',
+  read() async {
+    NotifierDatabase helper;
+      print(null);
+  }
 
-    //Use a where clause to find a specific notifier
-    where:  "id = ?",
-
-    //This passes the notifier's id to find the specific one
-    whereArgs: [id],
-
-  );
+/* Data ⤴ ----------------------------------------------------------------> */
+  
+  factory NotifierDatabaseHelper() {
+    return _notifierHelperData;
+  }
+  NotifierDatabaseHelper._internal();
 }
 
-//Delete this
-print(deleteNotifier(0).toString());
-
-//Sample Data
-final aapl = Notifier(
-  id: 0,
-  page0NumberData: 2,
-  page0UnitData: 1,
-  page1Data: 0,
-  page2InputData: 1,
-  page2UnitData: 1,
-  page3Data: 0,
-);
-
-await insertNotifier(aapl);
-
-}
-
-
-
+//The object that holds the data
+final notifierHelperData = NotifierDatabaseHelper();
