@@ -685,6 +685,9 @@ class _NotifierState extends State<Notifier> {
                                           ),
                                       ),
 
+                                      SizedBox(height: 10.0),
+
+                                      RaisedButton(onPressed: () {notifierHelperData.read();}, child: Text('Read')),
 
                                       SizedBox(height: 10.0),
 
@@ -757,7 +760,6 @@ class _NotifierState extends State<Notifier> {
                                         if(notifierNavigationData.pageCount == 3) {
                                           setState(() {
                                             animateFinishButton = true;
-                                            notifierHelperData.read();
                                           });
 
 

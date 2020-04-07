@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 //Dart files
+import 'dart:async';
 import 'dart:io';
 
 
@@ -72,8 +73,16 @@ class Notifier {
   //Singleton class to manage the database
     class DatabaseHelper {
 
+    // final Future<Database> database = openDatabase(
+
+    //   join(await getDatabasesPath(), 'database.db'),
+
+    // );
+
+
+
       // This is the actual database filename that is saved in the docs directory.
-      static final _databaseName = "MyDatabase.db";
+      static final _databaseName = "notifier_database.db";
       // Increment this version when you need to change the schema.
       static final _databaseVersion = 1;
 
@@ -97,23 +106,17 @@ class Notifier {
         // Open the database. Can also add an onUpdate callback parameter.
         return await openDatabase(path,
             version: _databaseVersion,
-            onCreate: _onCreate);
+            onCreate: (db, version) async { await db.execute(
+          "CREATE TABLE $tableNotifiers($columnId INTEGER PRIMARY KEY, $columnPage0NumberData INTEGER, $columnPage0UnitData INTEGER, $columnPage1Data INTEGER, $columnPage2InputData INTEGER, $columnPage2UnitData INTEGER, $columnPage3Data INTEGER)",
+          );
+             }
+          );
       }
 
-      // SQL string to create the database 
-      Future _onCreate(Database db, int version) async {
-        await db.execute('''
-              CREATE TABLE $tableNotifiers (
-                $columnId INTEGER PRIMARY KEY,
-                $columnPage0NumberData INTEGER,
-                $columnPage0UnitData INTEGER,
-                $columnPage1Data INTEGER,
-                $columnPage2InputData INTEGER,
-                $columnPage2UnitData INTEGER,
-                $columnPage3Data INTEGER,
-              )
-              ''');
-      }
+      // // SQL string to create the database 
+      // Future _onCreate(Database db, int version) async {
+      //   await 
+      // }
 
       // Database helper methods:
 
@@ -182,9 +185,16 @@ class NotifierDatabaseHelper {
   
 /* Data goes below ⤵ -----------------------------------------------------> */
 
-  read() {
+  read() async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    print(helper.queryAllNotifiers());
+    int rowId = 1;
+    Notifier notifier = await helper.queryNotifier(rowId);
+       if (notifier == null) {
+     print('read row $rowId: empty');
+   } else {
+     print('read row $rowId: ${notifier.id} ${notifier.page0NumberData}');
+   }
+    print(notifier.toString());
   }
 
 /* Data ⤴ ----------------------------------------------------------------> */
@@ -197,8 +207,3 @@ class NotifierDatabaseHelper {
 
 //The object that holds the data
 final notifierHelperData = NotifierDatabaseHelper();
-
-
-
-
-
