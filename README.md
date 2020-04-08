@@ -1,20 +1,9 @@
-# stockrails_001
-<<<<<<< HEAD
+# Stockrails 🏷
 
-A new Flutter project.
+This is the repository for the application Stockrails. This application is designed to track up-to-the-minute information on stocks and notify users when they start changing in price!
 
-## Getting Started
+#### This application is being designed using [Google's Flutter framework](https://flutter.dev/).
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+*Application design and programming by [Ty Irvine](https://github.com/tyirvine)*
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-This is a backup repository for the application, Stockrails
->>>>>>> b234f91d24c9153273ca8a1270f6b4ccafbe415c

@@ -3,8 +3,10 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+
 //Dart files
 import 'dart:async';
+
 
 
 
@@ -80,6 +82,7 @@ class Notifier {
     }
     
 }
+
 
 
 
@@ -224,6 +227,7 @@ class NotifierDatabaseHelper {
     int id = await helper.insert(notifier);
     print('Inserted into row: $id');
   }
+
 
 /* Data ⤴ ----------------------------------------------------------------> */
   
