@@ -1,5 +1,4 @@
-# Stockrails
----
+# Stockrails 🏷
 
 This is the repository for the application Stockrails. This application designed to track up-to-the-minute information on stocks and notify users when they start changing in price!
 
