@@ -5,5 +5,5 @@ This is the repository for the application Stockrails. This application is desig
 #### This application is being designed using [Google's Flutter framework](https://flutter.dev/).
 
 
-*Application design and programming by [Ty Irvine](github.com/tyirvine)*
+*Application design and programming by [Ty Irvine](https://github.com/tyirvine)*
 
