@@ -214,7 +214,7 @@ class NotifierDatabaseHelper {
     DatabaseHelper helper = DatabaseHelper.instance;
     Notifier notifier = await helper.queryNotifier(id);
     if (notifier == null) {
-     print('Notifier is null');
+     print('Read: Notifier is null');
     }
     else {
      print(notifier.toString());
@@ -227,13 +227,14 @@ class NotifierDatabaseHelper {
     DatabaseHelper helper = DatabaseHelper.instance;
     List<Notifier> notifier = await helper.queryAllNotifiers();
     if (notifier == null) {
-     print('Notifier is null');
+     print('Read All: Database is null');
     }
     else {
      print(notifier.toString());
     }
   }
 
+  //Inserts A Notifier
   write() async {
     Notifier notifier = Notifier();
     notifier.page0NumberData = 0;
@@ -246,6 +247,22 @@ class NotifierDatabaseHelper {
     int id = await helper.insert(notifier);
     print('Inserted into row: $id');
   }
+
+  //Delete Notifier
+  delete(int id) async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.deleteNotifier(id);
+    print('Notifier $id was deleted');
+  }
+
+  //Update Notifier
+  update(Notifier notifier) async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.updateNotifier(notifier);
+    print('Notifier ${notifier.id} has been updated');
+  }
+
+
 
 
 /* Data ⤴ ----------------------------------------------------------------> */
