@@ -3,11 +3,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 //Dart files
 import 'dart:async';
-
-
 
 
 //Database table and column names
@@ -47,6 +44,7 @@ class Notifier {
 
 
     Notifier({this.id, this.page0NumberData, this.page0UnitData, this.page1Data, this.page2InputData, this.page2UnitData, this.page3Data});
+
 
     Notifier.fromMap(Map<String, dynamic> map) {
       id = map[columnId];
@@ -94,14 +92,15 @@ class Notifier {
 
       // This is the actual database filename that is saved in the docs directory.
       static final _databaseName = "notifier_database.db";
+
       // Increment this version when you need to change the schema.
       static final _databaseVersion = 1;
 
-      // Make this a singleton class.
+      //Singleton Class Constructor
       DatabaseHelper._privateConstructor();
       static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-      // Only allow a single open connection to the database.
+      //Allows One Connection
       static Database _database;
       Future<Database> get database async {
         if (_database != null) return _database;
@@ -109,7 +108,7 @@ class Notifier {
         return _database;
       }
 
-      // open the database
+      //Opens The Database
       _initDatabase() async {
         // The path_provider plugin gets the right directory for Android or iOS.
         String documentsDirectory = await getDatabasesPath();
@@ -124,13 +123,11 @@ class Notifier {
           );
       }
 
-      // // SQL string to create the database 
-      // Future _onCreate(Database db, int version) async {
-      //   await 
-      // }
 
-      // Database helper methods:
 
+//-------------------------------------------------- Database Helper Methods
+
+      //Inserts A Notifier
       Future<int> insert(Notifier notifier) async {
         Database db = await database;
         int id = await db.insert(tableNotifiers, notifier.toMap());
@@ -138,15 +135,11 @@ class Notifier {
       }
 
 
-//-------------------------------------------------- Queries all notifiers in database !
-
+      //Returns All Notifiers
       Future<List<Notifier>> queryAllNotifiers() async {
 
-        //Database connection
-        final Database db = await database;
-
-        //Notifier map
-        final List<Map<String, dynamic>> maps = await db.query(tableNotifiers);
+        final Database db = await database; //Database connection
+        final List<Map<String, dynamic>> maps = await db.query(tableNotifiers); //Notifier map
 
         //This will return all entities if the database is filled
         if (maps.length > 0) {
@@ -162,15 +155,12 @@ class Notifier {
             );
           });
         }
-
         //This will return null if the database is empty
         return null;
       }
 
 
-
-//-------------------------------------------------- Queries one notifier !
-
+      //Returns One Notifier
       Future<Notifier> queryNotifier(int id) async {
         Database db = await database;
         List<Map> maps = await db.query(tableNotifiers,
@@ -178,15 +168,29 @@ class Notifier {
             where: '$columnId = ?',
             whereArgs: [id],
         );
-
         //This will return an entity if the database is filled
         if (maps.length > 0) {
           return Notifier.fromMap(maps.first);
         }
-
         //This will return null if there are no items in the database
         return null;
       }
+
+
+      //Deletes Specified Notifier
+      Future<int> deleteNotifier(int id) async {
+        Database db = await database;
+        return await db.delete(tableNotifiers, where: '$columnId = ?', whereArgs: [id]);
+      }
+
+
+      //Updates Specified Notifier
+      Future<int> updateNotifier(Notifier notifier) async {
+        Database db = await database;
+        return await db.update(tableNotifiers, notifier.toMap(), where: '$columnId = ?', whereArgs: [notifier.id]);
+      }
+
+
 
 } //DatabaseHelper End
 
@@ -204,15 +208,30 @@ class NotifierDatabaseHelper {
   
 /* Data goes below ⤵ -----------------------------------------------------> */
 
-  read() async {
+
+  //Reads A Notifier
+  read(int id) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    // int rowId = 1;
-    List<Notifier> notifier = await helper.queryAllNotifiers();
-       if (notifier == null) {
+    Notifier notifier = await helper.queryNotifier(id);
+    if (notifier == null) {
      print('Notifier is null');
-   } else {
+    }
+    else {
      print(notifier.toString());
-   }
+    }
+  }
+
+
+  //Reads Entire Database
+  readAll() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    List<Notifier> notifier = await helper.queryAllNotifiers();
+    if (notifier == null) {
+     print('Notifier is null');
+    }
+    else {
+     print(notifier.toString());
+    }
   }
 
   write() async {

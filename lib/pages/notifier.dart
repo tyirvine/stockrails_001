@@ -689,7 +689,7 @@ class _NotifierState extends State<Notifier> {
 
                                       RaisedButton(onPressed: () {notifierHelperData.write();}, child: Text('Write')),
 
-                                      RaisedButton(onPressed: () {notifierHelperData.read();}, child: Text('Read')),
+                                      RaisedButton(onPressed: () {notifierHelperData.readAll();}, child: Text('Read')),
 
                                       SizedBox(height: 10.0),
 
