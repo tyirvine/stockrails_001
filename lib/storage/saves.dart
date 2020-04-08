@@ -2,11 +2,9 @@
 //Dependencies
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
 
 //Dart files
 import 'dart:async';
-import 'dart:io';
 
 
 
@@ -29,16 +27,22 @@ class Notifier {
     //First Page Data
     int page0NumberData;
     int page0UnitData;
+    List<String> page0UnitList = ['Hours', 'Days', 'Weeks', 'Months'];
 
     //Second Page Data
     int page1Data;
+    List<String> page1List = ['Gains', 'Losses', 'Both'];
 
     //Third Page Data
     int page2UnitData;
     int page2InputData;
+    List<String> page2UnitList = [r'$', r'%', 'PIP'];
+
 
     //Fourth Page Data
     int page3Data;
+    List<String> page3List = ['Forever', 'Once'];
+
 
     Notifier({this.id, this.page0NumberData, this.page0UnitData, this.page1Data, this.page2InputData, this.page2UnitData, this.page3Data});
 
@@ -66,20 +70,24 @@ class Notifier {
       }
       return map;
     }
+
+
+//-------------------------------------------------- Overrides for strings !
+
+    @override
+    String toString() {
+      return '\n\n Notifier{  id: $id,  PAGE-0: $page0NumberData ${page0UnitList[page0UnitData]},  PAGE-1: ${page1List[page1Data]},  PAGE-2: ${page2UnitList[page2InputData]} $page2InputData,  PAGE-3: ${page3List[page3Data]} }\n\n';
+    }
+    
 }
 
 
 
-  //Singleton class to manage the database
+
+
+//-------------------------------------------------- Main Database !
+
     class DatabaseHelper {
-
-    // final Future<Database> database = openDatabase(
-
-    //   join(await getDatabasesPath(), 'database.db'),
-
-    // );
-
-
 
       // This is the actual database filename that is saved in the docs directory.
       static final _databaseName = "notifier_database.db";
@@ -101,8 +109,8 @@ class Notifier {
       // open the database
       _initDatabase() async {
         // The path_provider plugin gets the right directory for Android or iOS.
-        Directory documentsDirectory = await getApplicationDocumentsDirectory();
-        String path = join(documentsDirectory.path, _databaseName);
+        String documentsDirectory = await getDatabasesPath();
+        String path = join(documentsDirectory, _databaseName);
         // Open the database. Can also add an onUpdate callback parameter.
         return await openDatabase(path,
             version: _databaseVersion,
@@ -130,8 +138,12 @@ class Notifier {
 //-------------------------------------------------- Queries all notifiers in database !
 
       Future<List<Notifier>> queryAllNotifiers() async {
-        Database db = await database;
-        List<Map> maps = await db.query(tableNotifiers);
+
+        //Database connection
+        final Database db = await database;
+
+        //Notifier map
+        final List<Map<String, dynamic>> maps = await db.query(tableNotifiers);
 
         //This will return all entities if the database is filled
         if (maps.length > 0) {
@@ -173,12 +185,16 @@ class Notifier {
         return null;
       }
 
-    }
+} //DatabaseHelper End
 
 
 
 
-//Carrier for the read() and save() methods
+
+
+
+//-------------------------------------------------- Carrier for the read() and save() methods !
+
 class NotifierDatabaseHelper {
   
   static final NotifierDatabaseHelper _notifierHelperData = new NotifierDatabaseHelper._internal();
@@ -187,14 +203,26 @@ class NotifierDatabaseHelper {
 
   read() async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    int rowId = 1;
-    Notifier notifier = await helper.queryNotifier(rowId);
+    // int rowId = 1;
+    List<Notifier> notifier = await helper.queryAllNotifiers();
        if (notifier == null) {
-     print('read row $rowId: empty');
+     print('Notifier is null');
    } else {
-     print('read row $rowId: ${notifier.id} ${notifier.page0NumberData}');
+     print(notifier.toString());
    }
-    print(notifier.toString());
+  }
+
+  write() async {
+    Notifier notifier = Notifier();
+    notifier.page0NumberData = 0;
+    notifier.page0UnitData = 1;
+    notifier.page1Data = 0;
+    notifier.page2InputData = 1;
+    notifier.page2UnitData = 1;
+    notifier.page3Data = 0;
+    DatabaseHelper helper = DatabaseHelper.instance;
+    int id = await helper.insert(notifier);
+    print('Inserted into row: $id');
   }
 
 /* Data ⤴ ----------------------------------------------------------------> */
