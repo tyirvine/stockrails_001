@@ -7,9 +7,11 @@ import 'package:flutter/services.dart';
 
 //Global Data
 import 'package:stockrails_001/data.dart';
+import 'package:stockrails_001/storage/saves.dart';
 
 //Pages
 import 'package:stockrails_001/custom/picker.dart' as my;
+
 
 
 /*........................................... Program ......................................*/
@@ -26,6 +28,7 @@ class _NotifierState extends State<Notifier> {
 
   //Notifier Data
   NotifierNavigation navigation;
+  NotifierDatabaseHelper database;
   NotifierData notifier;
 
 
@@ -684,7 +687,9 @@ class _NotifierState extends State<Notifier> {
 
                                       SizedBox(height: 10.0),
 
-                                      RaisedButton(onPressed: () {}, child: Text('Read')),
+                                      RaisedButton(onPressed: () {notifierHelperData.write();}, child: Text('Write')),
+
+                                      RaisedButton(onPressed: () {notifierHelperData.read();}, child: Text('Read')),
 
                                       SizedBox(height: 10.0),
 
@@ -758,6 +763,8 @@ class _NotifierState extends State<Notifier> {
                                           setState(() {
                                             animateFinishButton = true;
                                           });
+
+
                                         }
 
                                         notifierPageSet();
