@@ -75,6 +75,10 @@ class NotifierData {
   int notifierPage3Data = 0;
   List<String> notifierPage3List = ['Forever', 'Once'];
 
+  //Logic Data
+  var notifierPrinciplePrice = 0.0;
+  DateTime notifierPrincipleDate = DateTime(2020, 1, 1, 0, 0, 0); // year / month / day / hour / minute / second
+
 
   notifierDataReset() {
     //First Page Data
@@ -90,6 +94,10 @@ class NotifierData {
 
     //Fourth Page Data
     notifierPage3Data = 0;
+
+    //Principle Price
+    notifierPrinciplePrice = 0.0;
+    notifierPrincipleDate = DateTime(2020, 1, 1, 0, 0, 0);    
   }
 
 

@@ -2,68 +2,126 @@
 //Dependencies
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/material.dart';
 
 //Dart files
 import 'dart:async';
 
 
+
+
 //Database table and column names
 final String tableNotifiers = 'notifiers';
-final String columnId = '_id';
-final String columnPage0NumberData = 'page0NumberData';
-final String columnPage0UnitData = 'page0UnitData';
-final String columnPage1Data = 'page1Data';
-final String columnPage2UnitData = 'page2UnitData';
-final String columnPage2InputData = 'page2InputData';
-final String columnPage3Data = 'page3Data';
 
-//Notifier data class
-class Notifier {
+//Identification
+final String columnId = '_id';
+final String columnSymbol = 'symbol';
+final String columnCompanyName = 'companyname';
+final String columnExchange = 'exchange';
+
+//Notifier
+final String columnPage0Input = 'page0Input';
+final String columnPage0Unit = 'page0Unit';
+final String columnPage1Input = 'page1Input';
+final String columnPage2Input = 'page2Input';
+final String columnPage2Unit = 'page2Unit';
+final String columnPage3Input = 'page3Input';
+
+//Logic
+final String columnPrinciplePrice = 'principlePrice';
+final String columnPrincipleDate = 'principleDate';
+
+
+//-------------------------------------------------- Notifier Data Class
+
+class NotifierInstance {
 
     //Identification
     int id;
+    String symbol;
+    String companyname;
+    String exchange;
 
-    //First Page Data
-    int page0NumberData;
-    int page0UnitData;
+    //Notifier
+    int page0Input;
+    int page0Unit;
     List<String> page0UnitList = ['Hours', 'Days', 'Weeks', 'Months'];
-
-    //Second Page Data
-    int page1Data;
+    int page1Input;
     List<String> page1List = ['Gains', 'Losses', 'Both'];
-
-    //Third Page Data
-    int page2UnitData;
-    int page2InputData;
+    int page2Unit;
+    int page2Input;
     List<String> page2UnitList = [r'$', r'%', 'PIP'];
-
-
-    //Fourth Page Data
-    int page3Data;
+    int page3Input;
     List<String> page3List = ['Forever', 'Once'];
 
+    //Logic
+    double principlePrice;
+    DateTime principleDate;
 
-    Notifier({this.id, this.page0NumberData, this.page0UnitData, this.page1Data, this.page2InputData, this.page2UnitData, this.page3Data});
+    //Constructor
+    NotifierInstance({
+      //Identification
+      this.id,
+      @required this.symbol,
+      @required this.companyname,
+      @required this.exchange,
+
+      //Notifier
+      @required this.page0Input,
+      @required this.page1Input,
+      @required this.page0Unit,
+      @required this.page2Input,
+      @required this.page2Unit,
+      @required this.page3Input,
+
+      //Logic
+      @required this.principleDate,
+      @required this.principlePrice,
+      });
 
 
-    Notifier.fromMap(Map<String, dynamic> map) {
+    NotifierInstance.fromMap(Map<String, dynamic> map) {
+
+      //Identification
       id = map[columnId];
-      page0NumberData = map[columnPage0NumberData];
-      page0UnitData = map[columnPage0UnitData];
-      page1Data = map[columnPage1Data];
-      page2InputData = map[columnPage2InputData];
-      page2UnitData = map[columnPage2UnitData];
-      page3Data = map[columnPage3Data];
+      symbol = map[columnSymbol];
+      companyname = map[columnCompanyName];
+      exchange = map [columnExchange];
+
+      //Notifier
+      page0Input = map[columnPage0Input];
+      page0Unit = map[columnPage0Unit];
+      page1Input = map[columnPage1Input];
+      page2Input = map[columnPage2Input];
+      page2Unit = map[columnPage2Unit];
+      page3Input = map[columnPage3Input];
+
+      //Logic
+      principlePrice = map[columnPrinciplePrice];
+      principleDate = map[columnPrincipleDate];
+
     }
 
     Map<String, dynamic> toMap() {
       var map = <String, dynamic>{
-        columnPage0NumberData: page0NumberData,
-        columnPage0UnitData: page0UnitData,
-        columnPage1Data: page1Data,
-        columnPage2InputData: page2InputData,
-        columnPage2UnitData: page2UnitData,
-        columnPage3Data: page3Data,
+
+        //Identification
+        columnSymbol: symbol,
+        columnCompanyName: companyname,
+        columnExchange: exchange,
+
+        //Notifier
+        columnPage0Input: page0Input,
+        columnPage0Unit: page0Unit,
+        columnPage1Input: page1Input,
+        columnPage2Input: page2Input,
+        columnPage2Unit: page2Unit,
+        columnPage3Input: page3Input,
+
+        //Logic
+        columnPrinciplePrice: principlePrice,
+        columnPrincipleDate: principleDate,
+
       };
       if (id != null) {
         map[columnId] = id;
@@ -76,7 +134,26 @@ class Notifier {
 
     @override
     String toString() {
-      return '\n\n Notifier{  id: $id,  PAGE-0: $page0NumberData ${page0UnitList[page0UnitData]},  PAGE-1: ${page1List[page1Data]},  PAGE-2: ${page2UnitList[page2InputData]} $page2InputData,  PAGE-3: ${page3List[page3Data]} }\n\n';
+      return '''\n\n
+        .
+        Notifier{ id: $id,
+        .
+        // Identification
+        symbol: $symbol,
+        companyname: $companyname,
+        exchange: $exchange,
+        .
+        // Notifier
+        page 0: $page0Input ${page0UnitList[page0Unit]},
+        page 1: ${page1List[page1Input]},
+        page 2: ${page2UnitList[page2Input]} $page2Input,
+        page 3: ${page3List[page3Input]} }
+        .
+        // Logic
+        principle price: $principlePrice,
+        principle date: $principleDate,
+        .
+      ''';
     }
     
 }
@@ -86,7 +163,11 @@ class Notifier {
 
 
 
-//-------------------------------------------------- Main Database !
+
+/*........................................... Program ......................................*/
+
+
+
 
     class DatabaseHelper {
 
@@ -117,7 +198,7 @@ class Notifier {
         return await openDatabase(path,
             version: _databaseVersion,
             onCreate: (db, version) async { await db.execute(
-          "CREATE TABLE $tableNotifiers($columnId INTEGER PRIMARY KEY, $columnPage0NumberData INTEGER, $columnPage0UnitData INTEGER, $columnPage1Data INTEGER, $columnPage2InputData INTEGER, $columnPage2UnitData INTEGER, $columnPage3Data INTEGER)",
+          "CREATE TABLE $tableNotifiers($columnId INTEGER PRIMARY KEY, $columnSymbol TEXT, $columnCompanyName TEXT, $columnExchange TEXT, $columnPage0Input INTEGER, $columnPage0Unit INTEGER, $columnPage1Input INTEGER, $columnPage2Input INTEGER, $columnPage2Unit INTEGER, $columnPage3Input INTEGER, $columnPrinciplePrice REAL, $columnPrincipleDate BLOB)",
           );
              }
           );
@@ -128,7 +209,7 @@ class Notifier {
 //-------------------------------------------------- Database Helper Methods
 
       //Inserts A Notifier
-      Future<int> insert(Notifier notifier) async {
+      Future<int> insert(NotifierInstance notifier) async {
         Database db = await database;
         int id = await db.insert(tableNotifiers, notifier.toMap());
         return id;
@@ -136,7 +217,7 @@ class Notifier {
 
 
       //Returns All Notifiers
-      Future<List<Notifier>> queryAllNotifiers() async {
+      Future<List<NotifierInstance>> queryAllNotifiers() async {
 
         final Database db = await database; //Database connection
         final List<Map<String, dynamic>> maps = await db.query(tableNotifiers); //Notifier map
@@ -144,14 +225,26 @@ class Notifier {
         //This will return all entities if the database is filled
         if (maps.length > 0) {
           return List.generate(maps.length, (i) {
-            return Notifier(
+            return NotifierInstance(
+
+              //Identification
               id: maps[i][columnId],
-              page0NumberData: maps[i][columnPage0NumberData],
-              page0UnitData: maps[i][columnPage0UnitData],
-              page1Data: maps[i][columnPage1Data],
-              page2InputData: maps[i][columnPage2InputData],
-              page2UnitData: maps[i][columnPage2UnitData],
-              page3Data: maps[i][columnPage3Data],
+              symbol: maps[i][columnId],
+              companyname: maps[i][columnCompanyName],
+              exchange: maps[i][columnExchange],
+
+              //Notifier
+              page0Input: maps[i][columnPage0Input],
+              page0Unit: maps[i][columnPage0Unit],
+              page1Input: maps[i][columnPage1Input],
+              page2Input: maps[i][columnPage2Input],
+              page2Unit: maps[i][columnPage2Unit],
+              page3Input: maps[i][columnPage3Input],
+
+              //Logic
+              principlePrice: maps[i][columnPrinciplePrice],
+              principleDate: maps[i][columnPrincipleDate],
+
             );
           });
         }
@@ -161,16 +254,16 @@ class Notifier {
 
 
       //Returns One Notifier
-      Future<Notifier> queryNotifier(int id) async {
+      Future<NotifierInstance> queryNotifier(int id) async {
         Database db = await database;
         List<Map> maps = await db.query(tableNotifiers,
-            columns: [columnId, columnPage0NumberData, columnPage0UnitData, columnPage1Data, columnPage2InputData, columnPage2UnitData, columnPage3Data],
+            columns: [columnId, columnSymbol, columnCompanyName, columnExchange, columnPage0Input, columnPage0Unit, columnPage1Input, columnPage2Input, columnPage2Unit, columnPage3Input, columnPrinciplePrice, columnPrincipleDate],
             where: '$columnId = ?',
             whereArgs: [id],
         );
         //This will return an entity if the database is filled
         if (maps.length > 0) {
-          return Notifier.fromMap(maps.first);
+          return NotifierInstance.fromMap(maps.first);
         }
         //This will return null if there are no items in the database
         return null;
@@ -185,7 +278,7 @@ class Notifier {
 
 
       //Updates Specified Notifier
-      Future<int> updateNotifier(Notifier notifier) async {
+      Future<int> updateNotifier(NotifierInstance notifier) async {
         Database db = await database;
         return await db.update(tableNotifiers, notifier.toMap(), where: '$columnId = ?', whereArgs: [notifier.id]);
       }
@@ -199,9 +292,6 @@ class Notifier {
 
 
 
-
-//-------------------------------------------------- Carrier for the read() and save() methods !
-
 class NotifierDatabaseHelper {
   
   static final NotifierDatabaseHelper _notifierHelperData = new NotifierDatabaseHelper._internal();
@@ -212,7 +302,7 @@ class NotifierDatabaseHelper {
   //Reads A Notifier
   read(int id) async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    Notifier notifier = await helper.queryNotifier(id);
+    NotifierInstance notifier = await helper.queryNotifier(id);
     if (notifier == null) {
      print('Read: Notifier is null');
     }
@@ -225,7 +315,7 @@ class NotifierDatabaseHelper {
   //Reads Entire Database
   readAll() async {
     DatabaseHelper helper = DatabaseHelper.instance;
-    List<Notifier> notifier = await helper.queryAllNotifiers();
+    List<NotifierInstance> notifier = await helper.queryAllNotifiers();
     if (notifier == null) {
      print('Read All: Database is null');
     }
@@ -235,14 +325,7 @@ class NotifierDatabaseHelper {
   }
 
   //Inserts A Notifier
-  write() async {
-    Notifier notifier = Notifier();
-    notifier.page0NumberData = 0;
-    notifier.page0UnitData = 1;
-    notifier.page1Data = 0;
-    notifier.page2InputData = 1;
-    notifier.page2UnitData = 1;
-    notifier.page3Data = 0;
+  write(NotifierInstance notifier) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     int id = await helper.insert(notifier);
     print('Inserted into row: $id');
@@ -256,7 +339,7 @@ class NotifierDatabaseHelper {
   }
 
   //Update Notifier
-  update(Notifier notifier) async {
+  update(NotifierInstance notifier) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     await helper.updateNotifier(notifier);
     print('Notifier ${notifier.id} has been updated');
@@ -275,3 +358,10 @@ class NotifierDatabaseHelper {
 
 //The object that holds the data
 final notifierHelperData = NotifierDatabaseHelper();
+
+
+
+
+
+
+/*........................................... Program ......................................*/

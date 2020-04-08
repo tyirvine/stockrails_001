@@ -46,7 +46,7 @@ class _SearchState extends State<Search> {
 
 //-------------------------------------------------- Bottom Sheet Card
   
-  _showBottomSheet(context, String companyName, String exchange, String symbol) {
+  _showBottomSheet(context, String companyName, String exchange, String symbol, var price) {
       my.showModalBottomSheet(
         context: (context),
         isScrollControlled: false,
@@ -193,11 +193,18 @@ class _SearchState extends State<Search> {
                     padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                     child: FlatButton(
                     onPressed: () {
+
+                      //Records latest price
+                      notifierData.notifierPrinciplePrice = price;
+                      print(notifierData.notifierPrinciplePrice);
+
+                      //Pushes data to next page
                       Navigator.of(context).pushNamed( '/notifier', arguments: {
                         'symbol': symbol,
                         'companyname': companyName,
                         'exchange': exchange,
                       });
+
                     },
                     color: Colours.grey7,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
@@ -258,7 +265,7 @@ class _SearchState extends State<Search> {
 //-------------------------------------------------- List Stock Tile
                   ListTile(
                     onTap: () {
-                      _showBottomSheet(context, post.companyname, post.exchange, post.symbol);
+                      _showBottomSheet(context, post.companyname, post.exchange, post.symbol, post.latestprice);
                     },
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

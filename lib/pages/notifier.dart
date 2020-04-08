@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 //Global Data
 import 'package:stockrails_001/data.dart';
+import 'package:stockrails_001/pages/search.dart';
 import 'package:stockrails_001/storage/saves.dart';
 
 //Pages
@@ -687,7 +688,32 @@ class _NotifierState extends State<Notifier> {
 
                                       SizedBox(height: 10.0),
 
-                                      RaisedButton(onPressed: () {notifierHelperData.write();}, child: Text('Write')),
+                                      RaisedButton(onPressed: () {
+                                        notifierData.notifierPrincipleDate = DateTime.now();
+                                        
+                                        notifierHelperData.write(
+                                        NotifierInstance(
+
+                                          //Identification
+                                          symbol: symbol,
+                                          companyname: companyName,
+                                          exchange: exchange,
+
+                                          //Notifier
+                                          page0Input: notifierData.notifierPage0NumberData,
+                                          page0Unit: notifierData.notifierPage0UnitData,
+                                          page1Input: notifierData.notifierPage0UnitData,
+                                          page2Input: notifierData.notifierPage2InputData,
+                                          page2Unit: notifierData.notifierPage2UnitData,
+                                          page3Input: notifierData.notifierPage3Data,
+
+                                          //Logic
+                                          principlePrice: notifierData.notifierPrinciplePrice,
+                                          principleDate: notifierData.notifierPrincipleDate,
+
+                                      ));},
+                                      child: Text('Write')
+                                      ),
 
                                       RaisedButton(onPressed: () {notifierHelperData.readAll();}, child: Text('Read')),
 
@@ -730,7 +756,8 @@ class _NotifierState extends State<Notifier> {
                                         child: IconButton(
                                         onPressed: animateBackButton ? () {
                                           if(notifierNavigationData.pageCount > 0) {
-                                            notifierNavigationData.pageCount -= 1;
+                                            if(notifierNavigationData.pageCount == 4) notifierNavigationData.pageCount -= 2;
+                                            else notifierNavigationData.pageCount -= 1;
                                           }
                                           if(notifierNavigationData.pageCount == 0) {
                                             setState(() {
@@ -742,6 +769,7 @@ class _NotifierState extends State<Notifier> {
                                             animateFinishButton = false;
                                           });
 
+                                          //This ensures the pages get refreshed
                                           notifierPageSet();
 
                                         }
@@ -751,8 +779,9 @@ class _NotifierState extends State<Notifier> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        if(notifierNavigationData.pageCount < 3) {
+                                        if(notifierNavigationData.pageCount < 4) {
                                           notifierNavigationData.pageCount += 1;
+                                          print(notifierNavigationData.pageCount.toString());
                                         }
                                         if(notifierNavigationData.pageCount == 1) {
                                           setState(() {
@@ -763,11 +792,17 @@ class _NotifierState extends State<Notifier> {
                                           setState(() {
                                             animateFinishButton = true;
                                           });
-
-
                                         }
 
+                                        //This ensures the pages get refreshed
                                         notifierPageSet();
+
+//-------------------------------------------------- Notifier Creation Finish !
+
+                                        if(notifierNavigationData.pageCount == 4) {
+                                        }
+
+                                        
 
                                       },
                                       child: Stack(
