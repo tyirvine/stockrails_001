@@ -9,7 +9,6 @@ import 'dart:async';
 
 
 
-
 //Database table and column names
 final String tableNotifiers = 'notifiers';
 

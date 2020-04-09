@@ -44,8 +44,24 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
 
-//-------------------------------------------------- Bottom Sheet Card
-  
+  //Open notifier creation page
+  newNotifier(context, String companyName, String exchange, String symbol, dynamic price) {
+
+      //Records latest price
+      notifierData.notifierPrinciplePrice = price;
+      print(notifierData.notifierPrinciplePrice);
+
+      //Pushes data to next page
+      Navigator.of(context).pushNamed( '/notifier', arguments: {
+        'symbol': symbol,
+        'companyname': companyName,
+        'exchange': exchange,
+      });
+
+    }
+
+
+  //Displays bottom sheet  
   _showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price) {
       my.showModalBottomSheet(
         context: (context),
@@ -180,7 +196,7 @@ class _SearchState extends State<Search> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                           Container(width: 30.0, padding: EdgeInsets.all(0.0), child: IconButton(onPressed: () {}, icon: Icon(Icons.create))),
-                          Container(width: 30.0, padding: EdgeInsets.all(0.0), child: IconButton(onPressed: () {}, icon: Icon(Icons.add))),
+                          Container(width: 30.0, padding: EdgeInsets.all(0.0), child: IconButton(onPressed: () {newNotifier(context, companyName, exchange, symbol, price);}, icon: Icon(Icons.add))),
                         ],),
                       )
                     ],)
@@ -191,21 +207,7 @@ class _SearchState extends State<Search> {
 //-------------------------------------------------- New alert add button
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                    child: FlatButton(
-                    onPressed: () {
-
-                      //Records latest price
-                      notifierData.notifierPrinciplePrice = price;
-                      print(notifierData.notifierPrinciplePrice);
-
-                      //Pushes data to next page
-                      Navigator.of(context).pushNamed( '/notifier', arguments: {
-                        'symbol': symbol,
-                        'companyname': companyName,
-                        'exchange': exchange,
-                      });
-
-                    },
+                    child: FlatButton(onPressed: () {newNotifier(context, companyName, exchange, symbol, price);},
                     color: Colours.grey7,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
                     child: Padding(
@@ -237,7 +239,7 @@ class _SearchState extends State<Search> {
   }
 
 
-//-------------------------------------------------- Page
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -62,6 +62,35 @@ class _NotifierState extends State<Notifier> {
       return Center(child: Text('$number'));
     }
 
+    //Inserts notifier into database
+    writeNotifier() {
+      notifierData.notifierPrincipleDate = DateTime.now().millisecondsSinceEpoch;
+      notifierData.notifierPage2InputData = double.parse(notifierPage2Controller.text);
+
+      notifierHelperData.write(
+      NotifierInstance(
+
+      //Identification
+      symbol: '${data['symbol']}',
+      companyname: '${data['companyname']}',
+      exchange: '${data['exchange']}',
+
+      //Notifier
+      page0Input: notifierData.notifierPage0NumberData,
+      page0Unit: notifierData.notifierPage0UnitData,
+      page1Input: notifierData.notifierPage1Data,
+      page2Input: notifierData.notifierPage2InputData,
+      page2Unit: notifierData.notifierPage2UnitData,
+      page3Input: notifierData.notifierPage3Data,
+
+      //Logic
+      principlePrice: notifierData.notifierPrinciplePrice,
+      principleDate: notifierData.notifierPrincipleDate,
+
+      ));
+    }
+
+
     //Notifier page setter
     notifierPageSet() {
     if (notifierNavigationData.pageCount == 0) {
@@ -102,6 +131,22 @@ class _NotifierState extends State<Notifier> {
     }
 
 
+    //Resets all data for notifier creation
+    resetCreation() {
+      notifierData.notifierDataReset();
+      notifierNavigationData.pageCountReset();
+      setState(() {
+        animateNotifierPage0 = true;
+        animateNotifierPage1 = false;
+        animateNotifierPage2 = false;
+        animateNotifierPage3 = false;
+      });
+    }
+
+
+
+
+    //UI
     return GestureDetector(
           onTap: () {
             FocusScopeNode currentFocus = FocusScope.of(context);
@@ -146,16 +191,8 @@ class _NotifierState extends State<Notifier> {
 //-------------------------------------------------- Navigation & Notifier Reset On Close !
 
                                     IconButton(onPressed: () {
-
                                       Navigator.pop(context);
-                                      notifierData.notifierDataReset();
-                                      notifierNavigationData.pageCountReset();
-                                      setState(() {
-                                        animateNotifierPage0 = true;
-                                        animateNotifierPage1 = false;
-                                        animateNotifierPage2 = false;
-                                        animateNotifierPage3 = false;
-                                        });
+                                      resetCreation();
                                       },
 
                                       icon: Icon(Icons.close),
@@ -684,45 +721,13 @@ class _NotifierState extends State<Notifier> {
                                           )
                                           ),
                                       ),
-
-                                      SizedBox(height: 10.0),
-
-                                      RaisedButton(onPressed: () {
-                                        notifierData.notifierPrincipleDate = DateTime.now().millisecondsSinceEpoch;
-                                        notifierData.notifierPage2InputData = double.parse(notifierPage2Controller.text);
-                                        
-                                        notifierHelperData.write(
-                                        NotifierInstance(
-
-                                          //Identification
-                                          symbol: '${data['symbol']}',
-                                          companyname: '${data['companyname']}',
-                                          exchange: '${data['exchange']}',
-
-                                          //Notifier
-                                          page0Input: notifierData.notifierPage0NumberData,
-                                          page0Unit: notifierData.notifierPage0UnitData,
-                                          page1Input: notifierData.notifierPage1Data,
-                                          page2Input: notifierData.notifierPage2InputData,
-                                          page2Unit: notifierData.notifierPage2UnitData,
-                                          page3Input: notifierData.notifierPage3Data,
-
-                                          //Logic
-                                          principlePrice: notifierData.notifierPrinciplePrice,
-                                          principleDate: notifierData.notifierPrincipleDate,
-
-                                      ));},
-                                      child: Text('Write')
-                                      ),
-
+     
                                       RaisedButton(onPressed: () {notifierHelperData.readAll();}, child: Text('Read')),
 
                                       SizedBox(height: 10.0),
 
                                       Text('Selected: ' + notifierData.notifierPage3List[notifierData.notifierPage3Data], style: TextStyle(color: Colours.white13)),
 
-
-                                      
                                     ]),
                                   ),
                                 ),
@@ -777,6 +782,8 @@ class _NotifierState extends State<Notifier> {
                                         icon: Icon(Icons.arrow_back_ios, color: Colours.white13,),
                                       ),
                                     ),
+                                    
+                                    //Continue & Finish Button
                                     GestureDetector(
                                       onTap: () {
                                         if(notifierNavigationData.pageCount < 4) {
@@ -799,7 +806,13 @@ class _NotifierState extends State<Notifier> {
 
 //-------------------------------------------------- Notifier Creation Finish !
 
+                                        //Checks to see if Finish button is ok to press
+                                        //Inserts notifier into database and returns to bottom sheet
+
                                         if(notifierNavigationData.pageCount == 4) {
+                                          writeNotifier();
+                                          Navigator.pop(context);
+                                          resetCreation();
                                         }
 
                                         
