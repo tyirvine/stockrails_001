@@ -68,7 +68,7 @@ class NotifierData {
 
   //Third Page Data
   int notifierPage2UnitData = 0;
-  int notifierPage2InputData = 0;
+  var notifierPage2InputData = 0.0;
   List<String> notifierPage2UnitList = [r'$', r'%', 'PIP'];
 
   //Fourth Page Data
@@ -76,8 +76,8 @@ class NotifierData {
   List<String> notifierPage3List = ['Forever', 'Once'];
 
   //Logic Data
-  var notifierPrinciplePrice = 0.0;
-  DateTime notifierPrincipleDate = DateTime(2020, 1, 1, 0, 0, 0); // year / month / day / hour / minute / second
+  dynamic notifierPrinciplePrice = 0.0;
+  int notifierPrincipleDate = 0; // year / month / day / hour / minute / second
 
 
   notifierDataReset() {
@@ -97,7 +97,7 @@ class NotifierData {
 
     //Principle Price
     notifierPrinciplePrice = 0.0;
-    notifierPrincipleDate = DateTime(2020, 1, 1, 0, 0, 0);    
+    notifierPrincipleDate = 0;    
   }
 
 

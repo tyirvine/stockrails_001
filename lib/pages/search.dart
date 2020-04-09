@@ -46,7 +46,7 @@ class _SearchState extends State<Search> {
 
 //-------------------------------------------------- Bottom Sheet Card
   
-  _showBottomSheet(context, String companyName, String exchange, String symbol, var price) {
+  _showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price) {
       my.showModalBottomSheet(
         context: (context),
         isScrollControlled: false,

@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 
 //Global Data
 import 'package:stockrails_001/data.dart';
-import 'package:stockrails_001/pages/search.dart';
 import 'package:stockrails_001/storage/saves.dart';
 
 //Pages
@@ -689,20 +688,21 @@ class _NotifierState extends State<Notifier> {
                                       SizedBox(height: 10.0),
 
                                       RaisedButton(onPressed: () {
-                                        notifierData.notifierPrincipleDate = DateTime.now();
+                                        notifierData.notifierPrincipleDate = DateTime.now().millisecondsSinceEpoch;
+                                        notifierData.notifierPage2InputData = double.parse(notifierPage2Controller.text);
                                         
                                         notifierHelperData.write(
                                         NotifierInstance(
 
                                           //Identification
-                                          symbol: symbol,
-                                          companyname: companyName,
-                                          exchange: exchange,
+                                          symbol: '${data['symbol']}',
+                                          companyname: '${data['companyname']}',
+                                          exchange: '${data['exchange']}',
 
                                           //Notifier
                                           page0Input: notifierData.notifierPage0NumberData,
                                           page0Unit: notifierData.notifierPage0UnitData,
-                                          page1Input: notifierData.notifierPage0UnitData,
+                                          page1Input: notifierData.notifierPage1Data,
                                           page2Input: notifierData.notifierPage2InputData,
                                           page2Unit: notifierData.notifierPage2UnitData,
                                           page3Input: notifierData.notifierPage3Data,

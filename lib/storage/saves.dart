@@ -49,14 +49,14 @@ class NotifierInstance {
     int page1Input;
     List<String> page1List = ['Gains', 'Losses', 'Both'];
     int page2Unit;
-    int page2Input;
+    var page2Input;
     List<String> page2UnitList = [r'$', r'%', 'PIP'];
     int page3Input;
     List<String> page3List = ['Forever', 'Once'];
 
     //Logic
-    double principlePrice;
-    DateTime principleDate;
+    dynamic principlePrice;
+    int principleDate;
 
     //Constructor
     NotifierInstance({
@@ -146,7 +146,7 @@ class NotifierInstance {
         // Notifier
         page 0: $page0Input ${page0UnitList[page0Unit]},
         page 1: ${page1List[page1Input]},
-        page 2: ${page2UnitList[page2Input]} $page2Input,
+        page 2: ${page2UnitList[page2Unit]} $page2Input,
         page 3: ${page3List[page3Input]} }
         .
         // Logic
@@ -198,7 +198,7 @@ class NotifierInstance {
         return await openDatabase(path,
             version: _databaseVersion,
             onCreate: (db, version) async { await db.execute(
-          "CREATE TABLE $tableNotifiers($columnId INTEGER PRIMARY KEY, $columnSymbol TEXT, $columnCompanyName TEXT, $columnExchange TEXT, $columnPage0Input INTEGER, $columnPage0Unit INTEGER, $columnPage1Input INTEGER, $columnPage2Input INTEGER, $columnPage2Unit INTEGER, $columnPage3Input INTEGER, $columnPrinciplePrice REAL, $columnPrincipleDate BLOB)",
+          "CREATE TABLE $tableNotifiers($columnId INTEGER PRIMARY KEY, $columnSymbol TEXT, $columnCompanyName TEXT, $columnExchange TEXT, $columnPage0Input INTEGER, $columnPage0Unit INTEGER, $columnPage1Input INTEGER, $columnPage2Input REAL, $columnPage2Unit INTEGER, $columnPage3Input INTEGER, $columnPrinciplePrice REAL, $columnPrincipleDate BLOB)",
           );
              }
           );
@@ -226,25 +226,18 @@ class NotifierInstance {
         if (maps.length > 0) {
           return List.generate(maps.length, (i) {
             return NotifierInstance(
-
-              //Identification
               id: maps[i][columnId],
-              symbol: maps[i][columnId],
+              symbol: maps[i][columnSymbol],
               companyname: maps[i][columnCompanyName],
               exchange: maps[i][columnExchange],
-
-              //Notifier
               page0Input: maps[i][columnPage0Input],
               page0Unit: maps[i][columnPage0Unit],
               page1Input: maps[i][columnPage1Input],
               page2Input: maps[i][columnPage2Input],
               page2Unit: maps[i][columnPage2Unit],
               page3Input: maps[i][columnPage3Input],
-
-              //Logic
               principlePrice: maps[i][columnPrinciplePrice],
               principleDate: maps[i][columnPrincipleDate],
-
             );
           });
         }
@@ -307,7 +300,7 @@ class NotifierDatabaseHelper {
      print('Read: Notifier is null');
     }
     else {
-     print(notifier.toString());
+     debugPrint(notifier.toString());
     }
   }
 
@@ -320,7 +313,7 @@ class NotifierDatabaseHelper {
      print('Read All: Database is null');
     }
     else {
-     print(notifier.toString());
+     debugPrint(notifier.toString());
     }
   }
 
