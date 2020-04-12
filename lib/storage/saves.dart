@@ -250,7 +250,6 @@ class NotifierInstance {
 
       //Returns All Symbols
       Future<List> queryAllSymbols() async {
-
         final Database db = await database; //Database connection
         final List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
           columns: [columnSymbol],
@@ -258,7 +257,23 @@ class NotifierInstance {
 
         //This will return all entities if the database is filled
         if (maps.length > 0) {
-          return maps.toList();
+          return maps.map((i) => {(i['symbol'])}).toList();
+        }
+        //This will return null if the database is empty
+        return null;
+      }
+
+
+      //Returns Symbol Count
+      Future<int> querySymbolCount() async {
+        final Database db = await database; //Database connection
+        final List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
+          columns: [columnSymbol],
+        ); //Notifier map
+
+        //This will return all entities if the database is filled
+        if (maps.length > 0) {
+          return maps.length;
         }
         //This will return null if the database is empty
         return null;
@@ -379,7 +394,7 @@ class NotifierDatabaseHelper {
   }
 
 
-  //Reads All Symbols
+  // Reads All Symbols
   readAllSymbols() async {
     DatabaseHelper helper = DatabaseHelper.instance;
     List symbols = await helper.queryAllSymbols();
@@ -387,8 +402,24 @@ class NotifierDatabaseHelper {
       print('Read All Symbols: Database is null');
     }
     else {
-      print(symbols.toString().replaceAll(new RegExp('[{symbol:}]'), ''));
-      return symbols;
+      print(symbols.toList());
+      return symbols.toList();
+    }
+  }
+
+
+  // Reads Symbol Count
+  readSymbolCount() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    final int symbolCountList = await helper.querySymbolCount();
+    final String symbolCountString = symbolCountList.toString();
+    final int symbols = int.parse(symbolCountString);
+    if (symbols == null) {
+      print('Read Symbol Count: Database is null');
+    }
+    else {
+      print(symbols);
+      return [symbols];
     }
   }
 
@@ -400,12 +431,14 @@ class NotifierDatabaseHelper {
     print('Inserted into row: $id');
   }
 
+
   //Delete Notifier
   delete(int id) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     await helper.deleteNotifier(id);
     print('Notifier $id was deleted');
   }
+
 
   //Update Notifier
   update(NotifierInstance notifier) async {

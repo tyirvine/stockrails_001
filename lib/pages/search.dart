@@ -17,6 +17,7 @@ import 'dart:convert';
 
 //Global Data
 import 'package:stockrails_001/data.dart';
+import 'package:stockrails_001/storage/saves.dart';
 
 /*........................................... Program ......................................*/
 
@@ -35,6 +36,7 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
 
+
   // * Opens notifier creation page
   newNotifier(context, String companyName, String exchange, String symbol, dynamic price) {
     
@@ -51,7 +53,7 @@ class _SearchState extends State<Search> {
   }
 
   // * Displays bottom sheet
-  _showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price) {
+  _showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price) async {
     my.showModalBottomSheet(
         context: (context),
         isScrollControlled: false,
@@ -205,7 +207,15 @@ class _SearchState extends State<Search> {
 // * -------------------------------------------------- New alert add button
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                  child: FlatButton(
+                  child: Stack(
+                  children: <Widget>[
+
+                     Text('howdy'),
+                    
+                    if(notifierHelperData.readSymbolCount() >= 1) Container(alignment: Alignment.center, child: Text('Notifier')),
+                      
+                          
+                    FlatButton(
                       onPressed: () {
                         newNotifier(context, companyName, exchange, symbol, price);
                       },
@@ -233,6 +243,9 @@ class _SearchState extends State<Search> {
                           ],
                         ),
                       )),
+
+                    ],
+                  ),
                 ),
               ]),
             ],
@@ -248,7 +261,6 @@ class _SearchState extends State<Search> {
 // * -------------------------------------------------- Underlying Content
 
         Container(
-          // alignment: Alignment.center,
           margin: EdgeInsets.fromLTRB(0.0, Sizes.searchBarHeight, 0.0, 0.0),
           padding: EdgeInsets.all(20.0),
           child: Text('Howdy'),
@@ -262,13 +274,14 @@ class _SearchState extends State<Search> {
             child: Focus(
               // onFocusChange: _focus,
               child: SearchBar<StockSearch>(
+                searchBarPadding: EdgeInsets.all(5.0),
                 onSearch: getStockSearch,
                 onItemFound: (StockSearch post, int index) {
                   return Column(
                     children: <Widget>[
 // * -------------------------------------------------- List Stock Tile
                       ListTile(
-                        onTap: () {
+                        onTap: () async {
                           _showBottomSheet(context, post.companyname, post.exchange, post.symbol, post.latestprice);
                         },
                         title: Row(
