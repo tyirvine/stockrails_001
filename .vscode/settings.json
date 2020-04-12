@@ -1,3 +1,5 @@
 {
-    "dart.flutterSdkPath": "/Users/tyirvine/Development/flutter"
+    "dart.flutterSdkPath": "/Users/tyirvine/Development/flutter",
+    "workbench.panel.defaultLocation": "right",
+    "dimmer.enabled": false
 }

@@ -722,7 +722,7 @@ class _NotifierState extends State<Notifier> {
                                           ),
                                       ),
      
-                                      RaisedButton(onPressed: () {notifierHelperData.readAll();}, child: Text('Read')),
+                                      RaisedButton(onPressed: () {notifierHelperData.readAllSymbols();}, child: Text('Read')),
 
                                       SizedBox(height: 10.0),
 

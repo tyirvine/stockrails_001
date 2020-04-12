@@ -32,13 +32,18 @@ class StockSearch {
     change = json["change"];
     
     changeRendered =json["change"];
-    changeCorrected = json["change"].abs();
+    changeCorrected = json["change"]?.abs();
 
-    if(changeCorrected > 1) change = json["change"].toDouble().toStringAsFixed(2);
-    if(changeCorrected == 0) change = json["change"].toDouble().toStringAsFixed(2);
-    if( changeCorrected <= 1 && changeCorrected >= 0.05 ) change = json["change"].toDouble().toStringAsFixed(3);
-    if( changeCorrected <= 0.05 && changeCorrected != 0.0 ) change = json["change"].toDouble().toStringAsFixed(4);
-
+    if(changeCorrected != null && changeRendered != null ) {
+      if(changeCorrected > 1) change = json["change"].toDouble().toStringAsFixed(2);
+      if(changeCorrected == 0) change = json["change"].toDouble().toStringAsFixed(2);
+      if( changeCorrected <= 1 && changeCorrected >= 0.05 ) change = json["change"].toDouble().toStringAsFixed(3);
+      if( changeCorrected <= 0.05 && changeCorrected != 0.0 ) change = json["change"].toDouble().toStringAsFixed(4);
+    }
+    else {
+      changeCorrected = 0.0;
+      changeRendered = 0.0;
+    }
   }
 }
 

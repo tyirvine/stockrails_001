@@ -1,11 +1,16 @@
-
-
 //Flutter SDK
 import 'package:flutter/material.dart';
 
 
 /*........................................... Program ......................................*/
 
+
+//Sizes : for the entire project
+class Sizes {
+
+static const double searchBarHeight = 135.0;
+
+}
 
 
 //Colours : for the entire project
@@ -107,5 +112,5 @@ class NotifierData {
   NotifierData._internal();
 }
 
-//Initialization for notifier navigation data
+//Initialization for notifier data
 final notifierData = NotifierData();

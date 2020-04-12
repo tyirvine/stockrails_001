@@ -14,7 +14,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'search_bar_style.dart';
 
 //Global Data
-// import 'package:stockrails_001/data.dart';
+import 'package:stockrails_001/data.dart';
 
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
@@ -226,7 +226,7 @@ class SearchBar<T> extends StatefulWidget {
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
     this.iconActiveColor = Colors.black,
     this.textStyle = const TextStyle(color: Colors.black),
-    this.cancellationWidget = const Text("Cancel"),
+    this.cancellationWidget = const Text("Cancel", overflow: TextOverflow.fade, maxLines: 1, softWrap: false),
     this.onCancelled,
     this.suggestions = const [],
     this.buildSuggestion,
@@ -371,10 +371,13 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     final widthMax = MediaQuery.of(context).size.width;
     return Stack(
           children: <Widget>[
+            
+
+            //Changing Backdrop Colour
             AnimatedOpacity(
               opacity: _animate ? 1.0 : 0,
               curve: Curves.easeInOut,
-              duration: Duration(milliseconds: _animate ? 300 : 0),
+              duration: Duration(milliseconds: _animate ? 300 : 200),
 //-------------------------------------------------- Fade-in Background ⤵
               child: Container(
                   alignment: Alignment.center,
@@ -383,6 +386,14 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                 ),
             ),
 
+            //Searchbar Backdrop
+            Container(
+            color: Colors.grey[200],
+            padding: EdgeInsets.fromLTRB(0.0, Sizes.searchBarHeight, 0.0, 0.0),
+            child: Container(height: 4.0, color: Colors.black12),
+          ),
+
+            //Searchbar
             SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
@@ -391,62 +402,87 @@ class _SearchBarState<T> extends State<SearchBar<T>>
               children: <Widget>[
                 Padding(
                   padding: widget.searchBarPadding,
-                  child: Container(
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Flexible(
-                          child: AnimatedContainer(
-                            duration: Duration(milliseconds: 200),
-                            width: _animate ? widthMax * .8 : widthMax,
-                            decoration: BoxDecoration(
-                              borderRadius: widget.searchBarStyle.borderRadius,
-                              color: widget.searchBarStyle.backgroundColor,
-                            ),
-                            child: Padding(
-                              padding: widget.searchBarStyle.padding,
-                              child: Theme(
-                                child: TextField(
-                                  textInputAction: TextInputAction.search,
-                                  controller: _searchQueryController,
-                                  onChanged: _onTextChanged,
-                                  style: widget.textStyle,
-                                  decoration: InputDecoration(
-                                    icon: widget.icon,
-                                    border: InputBorder.none,
-                                    hintText: widget.hintText,
-                                    hintStyle: widget.hintStyle,
+                  child: Column(
+                    children: <Widget>[
+                      Container( //Spaces content below
+                        height: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Flexible(
+                              child: AnimatedContainer( /////////////////////Check this out
+                                duration: Duration(milliseconds: 200),
+                                width: _animate ? widthMax * .8 : widthMax,
+                                decoration: BoxDecoration(
+                                  borderRadius: widget.searchBarStyle.borderRadius,
+                                  color: widget.searchBarStyle.backgroundColor,
+                                ),
+                                child: Padding(
+                                  padding: widget.searchBarStyle.padding,
+                                  child: Theme(
+                                    child: TextField(
+                                      textAlign: TextAlign.justify,
+                                      textInputAction: TextInputAction.search,
+                                      controller: _searchQueryController,
+                                      onChanged: _onTextChanged,
+                                      style: widget.textStyle,
+                                      decoration: InputDecoration(
+                                        icon: widget.icon,
+                                        border: InputBorder.none,
+                                        hintText: widget.hintText,
+                                        hintStyle: widget.hintStyle,
+                                      ),
+                                    ),
+                                    data: Theme.of(context).copyWith(
+                                      primaryColor: widget.iconActiveColor,
+                                    ),
                                   ),
                                 ),
-                                data: Theme.of(context).copyWith(
-                                  primaryColor: widget.iconActiveColor,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {_cancel();},
+                              child: AnimatedOpacity(
+                                opacity: _animate ? 1.0 : 0,
+                                curve: Curves.easeIn,
+                                duration: Duration(milliseconds: _animate ? 500: 100),
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: _animate ? 150: 100),
+                                  width:
+                                      _animate ? MediaQuery.of(context).size.width * .15 : 0,
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                                        child: widget.cancellationWidget,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                        GestureDetector(
-                          onTap: _cancel,
-                          child: AnimatedOpacity(
-                            opacity: _animate ? 1.0 : 0,
-                            curve: Curves.easeIn,
-                            duration: Duration(milliseconds: _animate ? 1000 : 0),
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 200),
-                              width:
-                                  _animate ? MediaQuery.of(context).size.width * .2 : 0,
-                              child: Container(
-                                color: Colors.transparent,
-                                child: Center(
-                                  child: widget.cancellationWidget,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      
+                      SizedBox(height: 100.0),
+                      
+                      // //Delete me
+                      // TextField(
+                      //   style: TextStyle(height: 3.0),
+                      //   strutStyle: StrutStyle(leading: 10.0, height: 1.5, forceStrutHeight: true),
+                      //   scrollPadding: const EdgeInsets.all(0.0),
+                      //   controller: TextEditingController(),
+                      //   enableInteractiveSelection: true,
+                      //   cursorWidth: 10.0,
+                      //   textAlign: TextAlign.start,
+                      //   cursorRadius: Radius.circular(0.0),
+                      //   decoration: new InputDecoration(hintText: "Enter Something", contentPadding: const EdgeInsets.all(10.0)),
+                      // ),
+
+                      SizedBox(height: 20.0),
+                    ],
                   ),
                 ),
                 Padding(
@@ -460,6 +496,8 @@ class _SearchBarState<T> extends State<SearchBar<T>>
           ),
             ),
         ),
+      
+      
       ],
     );
   }

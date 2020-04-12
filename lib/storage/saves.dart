@@ -30,6 +30,9 @@ final String columnPage3Input = 'page3Input';
 final String columnPrinciplePrice = 'principlePrice';
 final String columnPrincipleDate = 'principleDate';
 
+//Column Array
+final List<String> columnNames = [columnId, columnSymbol, columnCompanyName, columnExchange, columnPage0Input, columnPage0Unit, columnPage1Input, columnPage2Input, columnPage2Unit, columnPage3Input, columnPrinciplePrice, columnPrincipleDate];
+
 
 //-------------------------------------------------- Notifier Data Class
 
@@ -104,12 +107,12 @@ class NotifierInstance {
     Map<String, dynamic> toMap() {
       var map = <String, dynamic>{
 
-        //Identification
+        /*Identification*/
         columnSymbol: symbol,
         columnCompanyName: companyname,
         columnExchange: exchange,
 
-        //Notifier
+        /*Notifier*/
         columnPage0Input: page0Input,
         columnPage0Unit: page0Unit,
         columnPage1Input: page1Input,
@@ -117,7 +120,7 @@ class NotifierInstance {
         columnPage2Unit: page2Unit,
         columnPage3Input: page3Input,
 
-        //Logic
+        /*Logic*/
         columnPrinciplePrice: principlePrice,
         columnPrincipleDate: principleDate,
 
@@ -150,7 +153,7 @@ class NotifierInstance {
         .
         // Logic
         principle price: $principlePrice,
-        principle date: $principleDate,
+        principle date: ${DateTime.fromMillisecondsSinceEpoch(principleDate)},
         .
       ''';
     }
@@ -245,11 +248,28 @@ class NotifierInstance {
       }
 
 
+      //Returns All Symbols
+      Future<List> queryAllSymbols() async {
+
+        final Database db = await database; //Database connection
+        final List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
+          columns: [columnSymbol],
+        ); //Notifier map
+
+        //This will return all entities if the database is filled
+        if (maps.length > 0) {
+          return maps.toList();
+        }
+        //This will return null if the database is empty
+        return null;
+      }
+
+
       //Returns One Notifier
       Future<NotifierInstance> queryNotifier(int id) async {
         Database db = await database;
         List<Map> maps = await db.query(tableNotifiers,
-            columns: [columnId, columnSymbol, columnCompanyName, columnExchange, columnPage0Input, columnPage0Unit, columnPage1Input, columnPage2Input, columnPage2Unit, columnPage3Input, columnPrinciplePrice, columnPrincipleDate],
+            columns: columnNames,
             where: '$columnId = ?',
             whereArgs: [id],
         );
@@ -258,6 +278,36 @@ class NotifierInstance {
           return NotifierInstance.fromMap(maps.first);
         }
         //This will return null if there are no items in the database
+        return null;
+      }
+
+
+      //Returns Notifier List Based On Symbol
+      Future<List> queryNotifierFromSymbol(String symbol) async {
+        Database db = await database;
+        List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
+        columns: columnNames,
+        where: '$columnSymbol = ?',
+        whereArgs: [symbol],
+        );
+        if(maps.length > 0) {
+          return List.generate(maps.length, (i) {
+            return NotifierInstance(
+              id: maps[i][columnId],
+              symbol: maps[i][columnSymbol],
+              companyname: maps[i][columnCompanyName],
+              exchange: maps[i][columnExchange],
+              page0Input: maps[i][columnPage0Input],
+              page0Unit: maps[i][columnPage0Unit],
+              page1Input: maps[i][columnPage1Input],
+              page2Input: maps[i][columnPage2Input],
+              page2Unit: maps[i][columnPage2Unit],
+              page3Input: maps[i][columnPage3Input],
+              principlePrice: maps[i][columnPrinciplePrice],
+              principleDate: maps[i][columnPrincipleDate],
+            );
+          });
+        }
         return null;
       }
 
@@ -274,7 +324,6 @@ class NotifierInstance {
         Database db = await database;
         return await db.update(tableNotifiers, notifier.toMap(), where: '$columnId = ?', whereArgs: [notifier.id]);
       }
-
 
 
 } //DatabaseHelper End
@@ -315,6 +364,34 @@ class NotifierDatabaseHelper {
      debugPrint(notifier.toString());
     }
   }
+
+
+  //Reads Symbols Notifiers
+  readSymbol(String symbol) async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    List notifier = await helper.queryNotifierFromSymbol(symbol);
+    if (notifier == null) {
+      print('Read Symbol: Database is null');
+    }
+    else {
+      debugPrint(notifier.toString());
+    }
+  }
+
+
+  //Reads All Symbols
+  readAllSymbols() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    List symbols = await helper.queryAllSymbols();
+    if (symbols == null) {
+      print('Read All Symbols: Database is null');
+    }
+    else {
+      print(symbols.toString().replaceAll(new RegExp('[{symbol:}]'), ''));
+      return symbols;
+    }
+  }
+
 
   //Inserts A Notifier
   write(NotifierInstance notifier) async {
