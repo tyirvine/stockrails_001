@@ -923,7 +923,7 @@ class _TextFieldState extends State<TextField> implements TextSelectionGestureDe
         cursorOpacityAnimates = true;
         cursorColor ??= CupertinoTheme.of(context).primaryColor;
         cursorRadius ??= const Radius.circular(2.0);
-        cursorOffset = Offset(iOSHorizontalOffset / MediaQuery.of(context).devicePixelRatio, 0);
+        cursorOffset = Offset(1, 0);
         break;
 
       case TargetPlatform.android:

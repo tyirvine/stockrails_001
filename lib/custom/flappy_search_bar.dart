@@ -12,6 +12,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 //Dependencies
 import 'search_bar_style.dart';
+import 'text_field.dart' as my;
 
 //Global Data
 import 'package:stockrails_001/data.dart';
@@ -225,7 +226,7 @@ class SearchBar<T> extends StatefulWidget {
     this.hintText = "",
     this.hintStyle = const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
     this.iconActiveColor = Colors.black,
-    this.textStyle = const TextStyle(color: Colors.black),
+    this.textStyle = const TextStyle(height: 1.30, color: Colors.black),
     this.cancellationWidget = const Text("Cancel", overflow: TextOverflow.fade, maxLines: 1, softWrap: false),
     this.onCancelled,
     this.suggestions = const [],
@@ -420,7 +421,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                                 child: Padding(
                                   padding: widget.searchBarStyle.padding,
                                   child: Theme(
-                                    child: TextField(
+                                    child: my.TextField(
                                       textAlign: TextAlign.justify,
                                       textInputAction: TextInputAction.search,
                                       controller: _searchQueryController,

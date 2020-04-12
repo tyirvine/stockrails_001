@@ -38,12 +38,12 @@ class _SearchState extends State<Search> {
   // * Opens notifier creation page
   newNotifier(context, String companyName, String exchange, String symbol, dynamic price) {
     
-    // * Records latest price
-    notifierData.notifierPrinciplePrice = price;
-    print(notifierData.notifierPrinciplePrice);
+  // * Records latest price
+  notifierData.notifierPrinciplePrice = price;
+  print(notifierData.notifierPrinciplePrice);
 
-    // * Pushes data to next page
-    Navigator.of(context).pushNamed('/notifier', arguments: {
+  // * Pushes data to next page
+  Navigator.of(context).pushNamed('/notifier', arguments: {
       'symbol': symbol,
       'companyname': companyName,
       'exchange': exchange,
