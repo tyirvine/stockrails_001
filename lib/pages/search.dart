@@ -209,7 +209,8 @@ class Search extends StatefulWidget {
 // * -------------------------------------------------- New alert add button
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-                  child: Stack(
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     
                     if(symbolCount > 0 || notifierData.notifierHasAlert == true) Container(alignment: Alignment.center, child: Text('Notifier'))
@@ -419,27 +420,36 @@ class _SearchState extends State<Search> {
     await Future.delayed(Duration(seconds: 1));
 
     var stockSearchSymbolData = await http.get(('https://sandbox.iexapis.com/stable/search/' + '$search' + '?token=Tsk_801c26698a37427898480622dd23e138'));
-    var stockSearchSymbolJSONData = json.decode(stockSearchSymbolData.body);
+    var stockSearchSymbolJSONData;
+
+    try {
+    stockSearchSymbolJSONData = json.decode(stockSearchSymbolData.body);
+    } on FormatException {
+      print('search.dart :: FormatException :: JSON is unreadable!');
+    }
 
     List<Symbol> stockSymbolList = [];
     List<StockSearch> stockSearchList = [];
 
-    for (var u in stockSearchSymbolJSONData) {
-      // * --------------- This adds in from the first API search -----
+    if(stockSearchSymbolJSONData != null) {
+        for (var u in stockSearchSymbolJSONData) {
 
-      Symbol stockSymbolUpdate = Symbol(u["symbol"]);
-      stockSymbolList.add(stockSymbolUpdate);
-      symbol = u["symbol"];
-      print(symbol);
-
-      // * --------------- This gathers the remaining information using a new api request from the symbol list above -----
-
-      var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5'));
-      var stockSearchJSONData = json.decode(stockSearchData.body);
-
-      if (stockSearchData.statusCode == 200) {
-        if (stockSearchJSONData.toString().contains('latestPrice: null') == false) stockSearchList.add(StockSearch.fromJson(stockSearchJSONData));
-      }
+          // * --------------- This adds in from the first API search -----
+          Symbol stockSymbolUpdate = Symbol(u["symbol"]);
+          stockSymbolList.add(stockSymbolUpdate);
+          symbol = u["symbol"];
+          print(symbol);
+    
+          // * --------------- This gathers the remaining information using a new api request from the symbol list above -----
+          var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5'));
+          var stockSearchJSONData = json.decode(stockSearchData.body);
+    
+          if (stockSearchData.statusCode == 200) {
+            if (stockSearchJSONData.toString().contains('latestPrice: null') == false) stockSearchList.add(StockSearch.fromJson(stockSearchJSONData));
+          }
+        }
+    } else {
+      print('search.dart :: JSON Data is unreadable!');
     }
 
     // * --------------- This instantiates the data to the UI -----
