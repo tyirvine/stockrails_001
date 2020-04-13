@@ -144,8 +144,6 @@ class _NotifierState extends State<Notifier> {
     }
 
 
-
-
     //UI
     return GestureDetector(
           onTap: () {

@@ -264,6 +264,23 @@ class NotifierInstance {
       }
 
 
+
+      //Returns Total Symbol Count
+      Future<int> queryTotalSymbolCount() async {
+        final Database db = await database; //Database connection
+        final List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
+          columns: [columnSymbol],
+        ); //Notifier map
+
+        //This will return all entities if the database is filled
+        if (maps.length > 0) {
+          return await Future.value(maps.length);
+        }
+        //This will return null if the database is empty
+        return null;
+      }
+
+
       //Returns Symbol Count of Symbol
       Future<int> querySymbolCount(String symbol) async {
         final Database db = await database; //Database connection
@@ -410,7 +427,7 @@ class NotifierDatabaseHelper {
   }
 
 
-  // Reads Symbol Count
+  // Reads Symbol Count of Specified Symbol
   readSymbolCount(String symbol) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     int symbolCountList = await helper.querySymbolCount(symbol);
@@ -421,6 +438,20 @@ class NotifierDatabaseHelper {
     else {
       print(symbols);
       return symbols;
+    }
+  }
+
+
+  // Reads Total Symbol Count
+  readTotalSymbolCount() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    int symbols = await helper.queryTotalSymbolCount();
+    if (symbols == null) {
+      print('Read Symbol Count: Database is null');
+    }
+    else {
+      print(symbols);
+      return symbols.toInt();
     }
   }
 

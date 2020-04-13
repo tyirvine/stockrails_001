@@ -15,7 +15,7 @@ import 'search_bar_style.dart';
 import 'text_field.dart' as my;
 
 //Global Data
-import 'package:stockrails_001/data.dart';
+// import 'package:stockrails_001/data.dart';
 
 
 mixin _ControllerListener<T> on State<SearchBar<T>> {
@@ -369,128 +369,132 @@ class _SearchBarState<T> extends State<SearchBar<T>>
 // * -------------------------------------------------- Built Widget --------------------------------- //
   @override
   Widget build(BuildContext context) {
+
+    // Maximum width of the device
     final widthMax = MediaQuery.of(context).size.width;
+
     return Stack(
           children: <Widget>[
+
+            // * Changing Backdrop Colour :: IgnorePointer allows pass-through of tap
+            IgnorePointer(
+              ignoring: true,
+              child: AnimatedOpacity(
+                opacity: _animate ? 1.0 : 0,
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: _animate ? 300 : 200),
+                child: Container(
+                    alignment: Alignment.center,
+                    //Change
+                    color: Colors.grey[300],
+                  ),
+              ),
+            ),
             
 
-            //Changing Backdrop Colour
-            AnimatedOpacity(
-              opacity: _animate ? 1.0 : 0,
-              curve: Curves.easeInOut,
-              duration: Duration(milliseconds: _animate ? 300 : 200),
-// * -------------------------------------------------- Fade-in Background ⤵
-              child: Container(
-                  alignment: Alignment.center,
-                  //Change
-                  color: Colors.grey[300],
-                ),
-            ),
-
-            // * Searchbar Backdrop
-          //   Container(
-          //   color: Colors.grey[200],
-          //   padding: EdgeInsets.fromLTRB(0.0, Sizes.searchBarHeight, 0.0, 0.0),
-          //   child: Container(height: 4.0, color: Colors.black12),
-          // ),
-
-            //Searchbar
-            Container(
-              color: Colors.grey[200],
-              child: SafeArea(
-              child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  color: Colors.grey[200],
-                  alignment: Alignment.center,
-                  padding: Sizes.searchBarPadding,
-                  child: Column(
-                      children: <Widget>[
-                      Padding(
-                        padding: widget.searchBarPadding,
-                        child: Column(
-                          children: <Widget>[
-                            Container( //Spaces content below
-                              height: 80,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Flexible(
-                                    child: AnimatedContainer( /////////////////////Check this out
-                                      duration: Duration(milliseconds: 200),
-                                      width: _animate ? widthMax * .8 : widthMax,
-                                      decoration: BoxDecoration(
-                                        borderRadius: widget.searchBarStyle.borderRadius,
-                                        color: widget.searchBarStyle.backgroundColor,
-                                      ),
-                                      child: Padding(
-                                        padding: widget.searchBarStyle.padding,
-                                        child: Theme(
-                                          child: my.TextField(
-                                            textAlign: TextAlign.justify,
-                                            textInputAction: TextInputAction.search,
-                                            controller: _searchQueryController,
-                                            onChanged: _onTextChanged,
-                                            style: widget.textStyle,
-                                            decoration: InputDecoration(
-                                              icon: widget.icon,
-                                              border: InputBorder.none,
-                                              hintText: widget.hintText,
-                                              hintStyle: widget.hintStyle,
-                                            ),
+            // * Searchbar
+            Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              
+              // * Search bar
+              Container(
+                color: Colors.grey[200],
+                alignment: Alignment.center,
+                padding: EdgeInsets.fromLTRB(15.0, MediaQuery.of(context).padding.top, 15.0, 10.0),
+                child: Column(
+                    children: <Widget>[
+                    Padding(
+                      padding: widget.searchBarPadding,
+                      child: Column(
+                        children: <Widget>[
+                          Container( //Spaces content below
+                            height: 80,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Flexible(
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 200),
+                                    width: _animate ? widthMax * .8 : widthMax,
+                                    decoration: BoxDecoration(
+                                      borderRadius: widget.searchBarStyle.borderRadius,
+                                      color: widget.searchBarStyle.backgroundColor,
+                                    ),
+                                    child: Padding(
+                                      padding: widget.searchBarStyle.padding,
+                                      child: Theme(
+                                        child: my.TextField(
+                                          textAlign: TextAlign.justify,
+                                          textInputAction: TextInputAction.search,
+                                          controller: _searchQueryController,
+                                          onChanged: _onTextChanged,
+                                          style: widget.textStyle,
+                                          decoration: InputDecoration(
+                                            icon: widget.icon,
+                                            border: InputBorder.none,
+                                            hintText: widget.hintText,
+                                            hintStyle: widget.hintStyle,
                                           ),
-                                          data: Theme.of(context).copyWith(
-                                            primaryColor: widget.iconActiveColor,
+                                        ),
+                                        data: Theme.of(context).copyWith(
+                                          primaryColor: widget.iconActiveColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {_cancel();},
+                                  child: AnimatedOpacity(
+                                    opacity: _animate ? 1.0 : 0,
+                                    curve: Curves.easeIn,
+                                    duration: Duration(milliseconds: _animate ? 500: 100),
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: _animate ? 150: 100),
+                                      width:
+                                          _animate ? MediaQuery.of(context).size.width * .15 : 0,
+                                      child: Container(
+                                        color: Colors.transparent,
+                                        child: Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                                            child: widget.cancellationWidget,
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {_cancel();},
-                                    child: AnimatedOpacity(
-                                      opacity: _animate ? 1.0 : 0,
-                                      curve: Curves.easeIn,
-                                      duration: Duration(milliseconds: _animate ? 500: 100),
-                                      child: AnimatedContainer(
-                                        duration: Duration(milliseconds: _animate ? 150: 100),
-                                        width:
-                                            _animate ? MediaQuery.of(context).size.width * .15 : 0,
-                                        child: Container(
-                                          color: Colors.transparent,
-                                          child: Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                                              child: widget.cancellationWidget,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Container(height: 4.0, color: Colors.black12),
-                
-                Padding(
-                  padding: widget.searchBarPadding,
-                  child: widget.header ?? Container(),
-                ),
-                Expanded(
+              ),
+              
+              // * Divider
+              Container(height: 4.0, color: Colors.black12),
+              
+              // * More padding below search bar
+              Padding(
+                padding: widget.searchBarPadding,
+                child: widget.header ?? Container(),
+              ),
+
+              // * Holds the search results container
+              Visibility(
+                visible: _animate,
+                child: Expanded(
                   child: _buildContent(context),
                 ),
-              ],
+              ),
+
+            ],
           ),
-        ),
-            ),
       
       
       ],
