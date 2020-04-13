@@ -59,6 +59,9 @@ class NotifierData {
 
   static final NotifierData _notifierData = new NotifierData._internal();
 
+  //UI Data
+  bool notifierHasAlert = false;
+
   //First Page Data
   int notifierPage0NumberData = 0;
   int notifierPage0UnitData = 0;

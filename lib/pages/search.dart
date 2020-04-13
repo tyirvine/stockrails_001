@@ -3,6 +3,7 @@ import 'dart:ui';
 
 //Pages
 import 'package:flutter/material.dart';
+// import 'package:sqflite/sqlite_api.dart';
 import 'package:stockrails_001/classes.dart';
 import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
 // import 'package:stockrails_001/pages/notifier.dart';
@@ -29,31 +30,32 @@ String symbol;
 //Focus State
 ValueChanged<bool> onFocusChanged;
 
+
 class Search extends StatefulWidget {
+
   @override
   _SearchState createState() => _SearchState();
-}
 
-class _SearchState extends State<Search> {
-
+  // * Captures symbol count (I suppose this needed to run within the widget build to work)
+  getSymbolCount(String symbol) async {
+    final int symbolCount = await notifierHelperData.readSymbolCount(symbol) ?? 0;
+    return symbolCount;
+  }
 
   // * Opens notifier creation page
   newNotifier(context, String companyName, String exchange, String symbol, dynamic price) {
-    
-  // * Records latest price
-  notifierData.notifierPrinciplePrice = price;
+  notifierData.notifierPrinciplePrice = price; // Records latest price
   print(notifierData.notifierPrinciplePrice);
-
-  // * Pushes data to next page
   Navigator.of(context).pushNamed('/notifier', arguments: {
       'symbol': symbol,
       'companyname': companyName,
       'exchange': exchange,
-    });
+      'price': price
+    });  // Pushes data to next page
   }
 
-  // * Displays bottom sheet
-  _showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price) async {
+ // * Displays bottom sheet
+  showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price, var symbolCount) async {
     my.showModalBottomSheet(
         context: (context),
         isScrollControlled: false,
@@ -209,13 +211,10 @@ class _SearchState extends State<Search> {
                   padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                   child: Stack(
                   children: <Widget>[
-
-                     Text('howdy'),
                     
-                    if(notifierHelperData.readSymbolCount() >= 1) Container(alignment: Alignment.center, child: Text('Notifier')),
+                    if(symbolCount > 0 || notifierData.notifierHasAlert == true) Container(alignment: Alignment.center, child: Text('Notifier'))
                       
-                          
-                    FlatButton(
+                    else if(symbolCount == 0 || notifierData.notifierHasAlert == false) FlatButton(
                       onPressed: () {
                         newNotifier(context, companyName, exchange, symbol, price);
                       },
@@ -253,8 +252,15 @@ class _SearchState extends State<Search> {
         });
   }
 
+}
+
+
+class _SearchState extends State<Search> {
+
   @override
   Widget build(BuildContext context) {
+
+    // * Application
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
@@ -282,7 +288,8 @@ class _SearchState extends State<Search> {
 // * -------------------------------------------------- List Stock Tile
                       ListTile(
                         onTap: () async {
-                          _showBottomSheet(context, post.companyname, post.exchange, post.symbol, post.latestprice);
+                          var symbolCount = await widget.getSymbolCount('${post.symbol}') ?? 0;
+                          widget.showBottomSheet(context, post.companyname, post.exchange, post.symbol, post.latestprice, symbolCount);
                         },
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -403,7 +410,9 @@ class _SearchState extends State<Search> {
     );
   }
 
+
 // * -------------------------------------------------- API Data!
+
 
   Future<List<StockSearch>> getStockSearch(String search) async {
     String symbol;

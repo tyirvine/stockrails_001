@@ -132,7 +132,7 @@ class _NotifierState extends State<Notifier> {
 
 
     //Resets all data for notifier creation
-    resetCreation() {
+    resetCreation() async {
       notifierData.notifierDataReset();
       notifierNavigationData.pageCountReset();
       setState(() {
@@ -804,13 +804,16 @@ class _NotifierState extends State<Notifier> {
                                         //This ensures the pages get refreshed
                                         notifierPageSet();
 
-//-------------------------------------------------- Notifier Creation Finish !
+// * -------------------------------------------------- Notifier Creation Finish !
 
                                         //Checks to see if Finish button is ok to press
                                         //Inserts notifier into database and returns to bottom sheet
 
                                         if(notifierNavigationData.pageCount == 4) {
                                           writeNotifier();
+                                          setState(() {
+                                          notifier.notifierHasAlert = true;                                            
+                                          }); // * Updates UI on bottom sheet
                                           Navigator.pop(context);
                                           resetCreation();
                                         }
