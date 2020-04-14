@@ -337,7 +337,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
         itemCount: items.length,
         shrinkWrap: widget.shrinkWrap,
         staggeredTileBuilder:
-            widget.indexedScaledTileBuilder ?? (int index) => ScaledTile.fit(1),
+        widget.indexedScaledTileBuilder ?? (int index) => ScaledTile.fit(1),
         scrollDirection: widget.scrollDirection,
         mainAxisSpacing: widget.mainAxisSpacing,
         crossAxisSpacing: widget.crossAxisSpacing,

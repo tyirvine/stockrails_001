@@ -275,20 +275,50 @@ class _SearchState extends State<Search> {
 // * -------------------------------------------------- Underlying Content
 
         Container(
+          alignment: Alignment.center,
           margin: EdgeInsets.fromLTRB(0.0, Sizes.searchBarHeight, 0.0, 0.0),
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
           child: Column(
-            children: <Widget>[
+              children: <Widget>[
+                
               FutureBuilder(
                 future: widget.getTotalSymbolCount(),
                 builder: (context, snapshot) {
-                  return ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data,
-                    itemBuilder: (BuildContext context, int i)  {
-                       return ListTile(title: Text('Howdy'));
-                      },
+
+                  if(snapshot.data == null) return Container();
+
+                  else return Expanded(
+                    child: ListView.builder(
+                          itemCount: snapshot.data,
+                          itemBuilder: (BuildContext context, int i) {
+                            
+                            if(i == 0) return Padding(
+                              padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  GestureDetector(onTap: () {}, child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Icon(Icons.create, size: 21.0, color: Colors.grey[500],),
+                                  )),
+                                  GestureDetector(onTap: () {}, child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Icon(Icons.crop_3_2, size: 24.0, color: Colors.grey[500]),
+                                  )),
+                              ]),
+                            );
+                            
+                            else return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
+                              child: Container(
+                                padding: EdgeInsets.all(35.0),
+                                color: Colors.grey[200],  
+                                child: Text('$i')
+                                
+                          ),
+                        );
+                      }
+                    ),
                   );
                 },
               ),
