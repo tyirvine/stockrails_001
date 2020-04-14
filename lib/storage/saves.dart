@@ -208,7 +208,7 @@ class NotifierInstance {
 
 
 
-//-------------------------------------------------- Database Helper Methods
+// * -------------------------------------------------- Database Helper Methods
 
       //Inserts A Notifier
       Future<int> insert(NotifierInstance notifier) async {
@@ -389,6 +389,7 @@ class NotifierDatabaseHelper {
   
 /* Data goes below ⤵ -----------------------------------------------------> */
 
+  Future refresh;
 
   //Reads A Notifier
   read(int id) async {
@@ -411,6 +412,7 @@ class NotifierDatabaseHelper {
      print('Read All: Database is null');
     }
     else {
+      debugPrint(notifier.toString());
       return notifier;
     }
   }
@@ -451,7 +453,6 @@ class NotifierDatabaseHelper {
       print('Read Symbol Count: Database is null');
     }
     else {
-      print(symbols);
       return symbols;
     }
   }
@@ -465,7 +466,6 @@ class NotifierDatabaseHelper {
       print('Read Symbol Count: Database is null');
     }
     else {
-      print(symbols);
       return symbols.toInt();
     }
   }

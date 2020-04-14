@@ -34,6 +34,12 @@ class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
 
+  // * Future
+  updateSymbolList() async {
+
+  }
+
+
   // * Captures list of all symbols
   getSymbolList() async {
     var symbolList = await notifierHelperData.readAllSymbols() ?? ['symbolList :: null'];
@@ -54,19 +60,17 @@ class Search extends StatefulWidget {
   }
 
   // * Opens notifier creation page
-  newNotifier(context, String companyName, String exchange, String symbol, dynamic price) {
-  notifierData.notifierPrinciplePrice = price; // Records latest price
-  print(notifierData.notifierPrinciplePrice);
+  newNotifier(context, String companyName, String exchange, String symbol) {// Records latest price
+
   Navigator.of(context).pushNamed('/notifier', arguments: {
       'symbol': symbol,
       'companyname': companyName,
       'exchange': exchange,
-      'price': price
     });  // Pushes data to next page
   }
 
  // * Displays bottom sheet
-  showBottomSheet(context, String companyName, String exchange, String symbol, dynamic price, var symbolCount) async {
+  showBottomSheet(context, String companyName, String exchange, String symbol) async {
     my.showModalBottomSheet(
         context: (context),
         isScrollControlled: false,
@@ -205,7 +209,7 @@ class Search extends StatefulWidget {
                                     padding: EdgeInsets.all(0.0),
                                     child: IconButton(
                                         onPressed: () {
-                                          newNotifier(context, companyName, exchange, symbol, price);
+                                          newNotifier(context, companyName, exchange, symbol);
                                         },
                                         icon: Icon(Icons.add))),
                               ],
@@ -224,36 +228,46 @@ class Search extends StatefulWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     
-                    if(symbolCount > 0 || notifierData.notifierHasAlert == true) Container(alignment: Alignment.center, child: Text('Notifier'))
-                      
-                    else if(symbolCount == 0 || notifierData.notifierHasAlert == false) FlatButton(
-                      onPressed: () {
-                        newNotifier(context, companyName, exchange, symbol, price);
-                      },
-                      color: Colours.grey7,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(25.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.add,
-                              color: Colours.grey10,
-                            ),
-                            SizedBox(height: 10.0),
-                            Text(
-                              'New Alert'.toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w600,
+                  FutureBuilder(
+                    future: getSymbolCount(symbol),
+                    builder: (context, snapBottomSheet) {
+                    
+                    if(snapBottomSheet.data != null) {
+                      if(snapBottomSheet.data > 0 || notifierData.notifierHasAlert == true) return Container(alignment: Alignment.center, child: Text('Notifier'));
+                        
+                      else return FlatButton(
+                        onPressed: () {
+                          newNotifier(context, companyName, exchange, symbol);
+                        },
+                        color: Colours.grey7,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(25.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.add,
                                 color: Colours.grey10,
                               ),
-                            ),
-                          ],
-                        ),
-                      )),
+                              SizedBox(height: 10.0),
+                              Text(
+                                'New Alert'.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colours.grey10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ));
+                    } else {
+                      return Container(); 
+                    }
+
+                      })
 
                     ],
                   ),
@@ -277,6 +291,7 @@ class _SearchState extends State<Search> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
+
 // * -------------------------------------------------- Underlying Content
 
         Container(
@@ -285,6 +300,7 @@ class _SearchState extends State<Search> {
           padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
           child: Column(
               children: <Widget>[
+
               FutureBuilder(
                 future: widget.getSymbolList(),
                 builder: (context, snapSymbolList) {
@@ -293,11 +309,11 @@ class _SearchState extends State<Search> {
 
                   else return Expanded(
                     child: ListView.builder(
-                          itemCount: snapSymbolList.data.length,
+                          itemCount: snapSymbolList.data.length + 1,
                           itemBuilder: (BuildContext context, int i) {
 
                             // * Corrects index
-                            int q = i -1;
+                            int q = i - 1;
 
                             // * Dashboard list icon buttons
                             if(i == 0) return Padding(
@@ -307,7 +323,9 @@ class _SearchState extends State<Search> {
                                 children: <Widget>[
 
                                   // TODO Delete me eventually
-                                  RaisedButton(onPressed: () {notifierHelperData.readAllSymbols();}, child: Text('Read')),
+                                  RaisedButton(onPressed: () {
+                                    notifierHelperData.readAll();
+                                    }, child: Text('Read')),
 
                                   SizedBox(width: 10.0),
 
@@ -326,65 +344,73 @@ class _SearchState extends State<Search> {
                             else return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
                               child: Container(
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(6.0), color: Colors.grey[200]),
-                                padding: EdgeInsets.all(35.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
+                                child: FlatButton(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                    padding: EdgeInsets.all(35.0),
+                                    color: Colors.grey[200],
+                                    onPressed: () {
+                                      setState(() {
+                                      widget.getSymbolList();
+                                      });
+                                      widget.showBottomSheet(context, snapSymbolList.data[q].companyname, snapSymbolList.data[q].exchange, snapSymbolList.data[q].symbol);
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
 
-                                        // * Symbol title
-                                        Text(snapSymbolList.data[q].symbol.toString(),
-                                            style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
+                                            // * Symbol title
+                                            Text(snapSymbolList.data[q].symbol.toString(),
+                                                style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
 
-                                        // * Company name title
-                                        Text(snapSymbolList.data[q].companyname.toString()),
+                                            // * Company name title
+                                            Text(snapSymbolList.data[q].companyname.toString()),
 
-                                      ],
-                                    ),
-                                    
-                                    // * This displays the notifier count for each symbol!
-                                    Row(
-                                    children: <Widget>[
-                                        FutureBuilder(
-                                         future: widget.getSymbolCount(snapSymbolList.data[q].symbol.toString()),
-                                         builder: (context, snapSymbolCount) {
-
-                                            // Returns placeholder while data loads
-                                            if(snapSymbolCount.data == null) return Text('0');
-
-                                            // Returns data
-                                            else return Container(
-                                              height: 25.0,
-                                              width: 30.0,
-                                              child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                children: <Widget>[
-                                                Text(snapSymbolCount.data.toString(),
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                SizedBox(width: 0.5),
-                                                Padding(
-                                                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 1.0),
-                                                  child: Icon(Icons.notifications, size: 17.0),
-                                                ),
-                                                ]),
-                                            );
-                                          }
+                                          ],
                                         ),
                                         
+                                        // * This displays the notifier count for each symbol!
+                                        Row(
+                                        children: <Widget>[
+                                            FutureBuilder(
+                                             future: widget.getSymbolCount(snapSymbolList.data[q].symbol.toString()),
+                                             builder: (context, snapSymbolCount) {
+
+                                                // Returns placeholder while data loads
+                                                if(snapSymbolCount.data == null) return Text('0');
+
+                                                // Returns data
+                                                else return Container(
+                                                  height: 25.0,
+                                                  width: 30.0,
+                                                  child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: <Widget>[
+                                                  Text(snapSymbolCount.data.toString(),
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  SizedBox(width: 0.5),
+                                                  Padding(
+                                                    padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 1.0),
+                                                    child: Icon(Icons.notifications, size: 17.0),
+                                                  ),
+                                                  ]),
+                                                );
+                                              }
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                  ],
                                 ),
                           ),
                         );
@@ -409,8 +435,7 @@ class _SearchState extends State<Search> {
 // * -------------------------------------------------- List Stock Tile
                 ListTile(
                   onTap: () async {
-                    var symbolCount = await widget.getSymbolCount('${post.symbol}') ?? 0;
-                    widget.showBottomSheet(context, post.companyname, post.exchange, post.symbol, post.latestprice, symbolCount);
+                    widget.showBottomSheet(context, post.companyname, post.exchange, post.symbol);
                   },
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -574,6 +599,26 @@ class _SearchState extends State<Search> {
 
     return stockSearchList;
   }
+
+
+  // // * This future simply makes a new call to the api for information using the specified symbol
+  // Future<StockSearch> stockInfo(String symbol) async {
+
+  //         // Makes call to api
+  //         var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5'));
+          
+  //         // Decodes the body
+  //         var stockSearchJSONData = json.decode(stockSearchData.body);
+
+  //         // Parses JSON data into useable iterables
+  //         StockSearch result = StockSearch.fromJson(stockSearchJSONData);
+
+  //         // Returns the result
+  //         return result;
+
+  // }
+
+
 }
 
 /*........................................... Program ......................................*/

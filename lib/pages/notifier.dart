@@ -1,13 +1,18 @@
 
-
 //Flutter SDK
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 //Global Data
 import 'package:stockrails_001/data.dart';
 import 'package:stockrails_001/storage/saves.dart';
+import 'package:stockrails_001/classes.dart';
+
+// Dart Files
+import 'dart:async';
+import 'dart:convert';
 
 //Pages
 import 'package:stockrails_001/custom/picker.dart' as my;
@@ -22,6 +27,15 @@ class Notifier extends StatefulWidget {
 
   @override
   _NotifierState createState() => _NotifierState();
+
+    // * This future simply makes a new call to the api for information using the specified symbol
+  Future<StockSearch> stockInfo(String symbol) async {
+          var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5')); // Makes call to api
+          var stockSearchJSONData = json.decode(stockSearchData.body); // Decodes the body
+          StockSearch result = StockSearch.fromJson(stockSearchJSONData); // Parses JSON data into useable iterables
+          return result; // Returns the result
+  }
+
 }
 
 class _NotifierState extends State<Notifier> {
@@ -29,7 +43,6 @@ class _NotifierState extends State<Notifier> {
   //Notifier Data
   NotifierNavigation navigation;
   NotifierDatabaseHelper database;
-  NotifierData notifier;
 
 
   //Notifier Animations
@@ -63,10 +76,22 @@ class _NotifierState extends State<Notifier> {
     }
 
     //Inserts notifier into database
-    writeNotifier() {
+    writeNotifier(String symbol) async {
+
+      // * Call to api and get latest information before writing
+      StockSearch post = await widget.stockInfo(symbol);
+
+      // * Log date
       notifierData.notifierPrincipleDate = DateTime.now().millisecondsSinceEpoch;
+
+      // * Log price from api call
+      notifierData.notifierPrinciplePrice = post.latestprice;
+
+      // ! I don't know what this does
+      // TODO: Figure out what this does
       notifierData.notifierPage2InputData = double.parse(notifierPage2Controller.text);
 
+      // * Write in data to database
       notifierHelperData.write(
       NotifierInstance(
 
@@ -806,9 +831,10 @@ class _NotifierState extends State<Notifier> {
                                         //Inserts notifier into database and returns to bottom sheet
 
                                         if(notifierNavigationData.pageCount == 4) {
-                                          writeNotifier();
+                                          writeNotifier('${data['symbol']}');
                                           setState(() {
-                                          notifier.notifierHasAlert = true;                                            
+                                          
+                                          notifierData.notifierHasAlert = true;                                            
                                           }); // * Updates UI on bottom sheet
                                           Navigator.pop(context);
                                           resetCreation();

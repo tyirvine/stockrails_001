@@ -253,6 +253,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
   bool _loading = false;
   Widget _error;
   final _searchQueryController = TextEditingController();
+  final _focusNode = FocusNode();
   Timer _debounce;
   bool _animate = false;
   List<T> _list = [];
@@ -318,7 +319,6 @@ class _SearchBarState<T> extends State<SearchBar<T>>
     if (widget.onCancelled != null) {
       widget.onCancelled();
     }
-
     setState(() {
       _searchQueryController.clear();
       _list.clear();
@@ -350,12 +350,17 @@ class _SearchBarState<T> extends State<SearchBar<T>>
   }
 
   Widget _buildContent(BuildContext context) {
+
+
+
     if (_error != null) {
       return _error;
     } else if (_loading) {
       return widget.loader;
+      // TODO I think this is where the search bug is coming from muahhahhahahaha FOUND YOU
     } else if (_searchQueryController.text.length < widget.minimumChars) {
-      _animate = true;
+
+      print("_animate :: " + _animate.toString());
       if (widget.placeHolder != null) return widget.placeHolder;
       return _buildListView(
           widget.suggestions, widget.buildSuggestion ?? widget.onItemFound);
@@ -369,6 +374,15 @@ class _SearchBarState<T> extends State<SearchBar<T>>
 // * -------------------------------------------------- Built Widget --------------------------------- //
   @override
   Widget build(BuildContext context) {
+
+    // * Animation controller (I know it's janky)
+    if (_focusNode.hasFocus == true) {
+      print("_focusNode :: " + _focusNode.hasFocus.toString());
+      setState(() {_animate = true;});
+    }
+    else {
+      setState(() {_animate = false;});
+    }
 
     // Maximum width of the device
     final widthMax = MediaQuery.of(context).size.width;
@@ -427,6 +441,7 @@ class _SearchBarState<T> extends State<SearchBar<T>>
                                         child: my.TextField(
                                           textAlign: TextAlign.justify,
                                           textInputAction: TextInputAction.search,
+                                          focusNode: _focusNode,
                                           controller: _searchQueryController,
                                           onChanged: _onTextChanged,
                                           style: widget.textStyle,
