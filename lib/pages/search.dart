@@ -3,10 +3,8 @@ import 'dart:ui';
 
 //Pages
 import 'package:flutter/material.dart';
-// import 'package:sqflite/sqlite_api.dart';
 import 'package:stockrails_001/classes.dart';
 import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
-// import 'package:stockrails_001/pages/notifier.dart';
 
 // Dependencies
 import 'package:http/http.dart' as http;
@@ -35,6 +33,12 @@ class Search extends StatefulWidget {
 
   @override
   _SearchState createState() => _SearchState();
+
+  // * Captures list of all symbols
+  getSymbolList() async {
+    var symbolList = await notifierHelperData.readAllSymbols() ?? ['symbolList :: null'];
+    return symbolList;
+  }
 
   // * Captures symbol count of specified symbol
   getSymbolCount(String symbol) async {
@@ -280,41 +284,80 @@ class _SearchState extends State<Search> {
           padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
           child: Column(
               children: <Widget>[
-                
               FutureBuilder(
-                future: widget.getTotalSymbolCount(),
+                future: widget.getSymbolList(),
                 builder: (context, snapshot) {
 
                   if(snapshot.data == null) return Container();
 
                   else return Expanded(
                     child: ListView.builder(
-                          itemCount: snapshot.data,
+                          itemCount: snapshot.data.length,
                           itemBuilder: (BuildContext context, int i) {
-                            
+
+                            // * Corrects index
+                            int q = i -1;
+
+                            // * Dashboard list icon buttons
                             if(i == 0) return Padding(
                               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
+
+                                  // TODO Delete me eventually
+                                  RaisedButton(onPressed: () {notifierHelperData.readAllSymbols();}, child: Text('Read')),
+
+                                  SizedBox(width: 10.0),
+
                                   GestureDetector(onTap: () {}, child: Padding(
                                     padding: const EdgeInsets.all(4.0),
-                                    child: Icon(Icons.create, size: 21.0, color: Colors.grey[500],),
+                                    child: Icon(Icons.create, size: 21.0, color: Colors.grey[600],),
                                   )),
                                   GestureDetector(onTap: () {}, child: Padding(
                                     padding: const EdgeInsets.all(4.0),
-                                    child: Icon(Icons.crop_3_2, size: 24.0, color: Colors.grey[500]),
+                                    child: Icon(Icons.crop_3_2, size: 24.0, color: Colors.grey[600]),
                                   )),
                               ]),
                             );
                             
+                            // * Dashboard list
                             else return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
                               child: Container(
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(6.0), color: Colors.grey[200]),
                                 padding: EdgeInsets.all(35.0),
-                                color: Colors.grey[200],  
-                                child: Text('$i')
-                                
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+
+                                        // * Symbol title
+                                        Text(snapshot.data[q].symbol.toString(),
+                                            style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+
+                                        // * Company name title
+                                        Text(snapshot.data[q].companyname.toString()),
+
+                                      ],
+                                    ),
+                                    
+                                    Container(
+                                      height: 25.0,
+                                      width: 30.0,
+                                      child: Row(children: <Widget>[
+                                        // Text(widget.getSymbolCount(snapshot.data[q].symbol).toString()),
+                                        ]),
+                                    ),
+
+                                  ],
+                                ),
                           ),
                         );
                       }
@@ -453,8 +496,6 @@ class _SearchState extends State<Search> {
             );
           },
         ),
-      
-
       
       ]),
     );

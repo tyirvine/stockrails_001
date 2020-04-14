@@ -248,16 +248,32 @@ class NotifierInstance {
       }
 
 
-      //Returns All Symbols
-      Future<List> queryAllSymbols() async {
+      //Returns All Symbols Without Duplicates
+      Future<List<NotifierInstance>> queryAllSymbols() async {
         final Database db = await database; //Database connection
         final List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
-          columns: [columnSymbol],
+        columns: columnNames,
+        groupBy: columnSymbol,
         ); //Notifier map
 
         //This will return all entities if the database is filled
         if (maps.length > 0) {
-          return maps.map((i) => {(i['symbol'])}).toList();
+          return List.generate(maps.length, (i) {
+            return NotifierInstance(
+              id: maps[i][columnId],
+              symbol: maps[i][columnSymbol],
+              companyname: maps[i][columnCompanyName],
+              exchange: maps[i][columnExchange],
+              page0Input: maps[i][columnPage0Input],
+              page0Unit: maps[i][columnPage0Unit],
+              page1Input: maps[i][columnPage1Input],
+              page2Input: maps[i][columnPage2Input],
+              page2Unit: maps[i][columnPage2Unit],
+              page3Input: maps[i][columnPage3Input],
+              principlePrice: maps[i][columnPrinciplePrice],
+              principleDate: maps[i][columnPrincipleDate],
+            );
+          });
         }
         //This will return null if the database is empty
         return null;
@@ -281,7 +297,7 @@ class NotifierInstance {
       }
 
 
-      //Returns Symbol Count of Symbol
+      //Returns Notifier Count of Specified Sybmbol
       Future<int> querySymbolCount(String symbol) async {
         final Database db = await database; //Database connection
         final List<Map<String, dynamic>> maps = await db.query(tableNotifiers,
@@ -395,12 +411,12 @@ class NotifierDatabaseHelper {
      print('Read All: Database is null');
     }
     else {
-     debugPrint(notifier.toString());
+      return notifier;
     }
   }
 
 
-  //Reads Symbols Notifiers
+  //Reads A Symbol's Notifiers
   readSymbol(String symbol) async {
     DatabaseHelper helper = DatabaseHelper.instance;
     List notifier = await helper.queryNotifierFromSymbol(symbol);
@@ -421,8 +437,7 @@ class NotifierDatabaseHelper {
       print('Read All Symbols: Database is null');
     }
     else {
-      print(symbols.toList());
-      return symbols.toList();
+      return symbols;
     }
   }
 
