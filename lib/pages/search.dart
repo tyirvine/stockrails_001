@@ -272,6 +272,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
 
+
     // * Application
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -286,13 +287,13 @@ class _SearchState extends State<Search> {
               children: <Widget>[
               FutureBuilder(
                 future: widget.getSymbolList(),
-                builder: (context, snapshot) {
+                builder: (context, snapSymbolList) {
 
-                  if(snapshot.data == null) return Container();
+                  if(snapSymbolList.data == null) return Container();
 
                   else return Expanded(
                     child: ListView.builder(
-                          itemCount: snapshot.data.length,
+                          itemCount: snapSymbolList.data.length,
                           itemBuilder: (BuildContext context, int i) {
 
                             // * Corrects index
@@ -335,7 +336,7 @@ class _SearchState extends State<Search> {
                                         children: <Widget>[
 
                                         // * Symbol title
-                                        Text(snapshot.data[q].symbol.toString(),
+                                        Text(snapSymbolList.data[q].symbol.toString(),
                                             style: TextStyle(
                                             fontSize: 20.0,
                                             fontWeight: FontWeight.w700,
@@ -343,19 +344,46 @@ class _SearchState extends State<Search> {
                                         ),
 
                                         // * Company name title
-                                        Text(snapshot.data[q].companyname.toString()),
+                                        Text(snapSymbolList.data[q].companyname.toString()),
 
                                       ],
                                     ),
                                     
-                                    Container(
-                                      height: 25.0,
-                                      width: 30.0,
-                                      child: Row(children: <Widget>[
-                                        // Text(widget.getSymbolCount(snapshot.data[q].symbol).toString()),
-                                        ]),
-                                    ),
+                                    // * This displays the notifier count for each symbol!
+                                    Row(
+                                    children: <Widget>[
+                                        FutureBuilder(
+                                         future: widget.getSymbolCount(snapSymbolList.data[q].symbol.toString()),
+                                         builder: (context, snapSymbolCount) {
 
+                                            // Returns placeholder while data loads
+                                            if(snapSymbolCount.data == null) return Text('0');
+
+                                            // Returns data
+                                            else return Container(
+                                              height: 25.0,
+                                              width: 30.0,
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                Text(snapSymbolCount.data.toString(),
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                SizedBox(width: 0.5),
+                                                Padding(
+                                                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 1.0),
+                                                  child: Icon(Icons.notifications, size: 17.0),
+                                                ),
+                                                ]),
+                                            );
+                                          }
+                                        ),
+                                        
+                                      ],
+                                    ),
                                   ],
                                 ),
                           ),
