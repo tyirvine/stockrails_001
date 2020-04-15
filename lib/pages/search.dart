@@ -1,24 +1,24 @@
-//Packages
-import 'dart:ui';
-
-//Pages
-import 'package:flutter/material.dart';
-import 'package:stockrails_001/classes.dart';
-import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
 
 // Dependencies
 import 'package:http/http.dart' as http;
-import 'package:stockrails_001/custom/flappy_search_bar.dart';
+import 'package:flutter/material.dart';
 
-// Dart Files
-import 'dart:async';
-import 'dart:convert';
+//Models
+import 'package:stockrails_001/models/stock-model.dart';
+import 'package:stockrails_001/models/statics-model.dart';
 
-//Global Data
+//Storage
 import 'package:stockrails_001/data.dart';
 import 'package:stockrails_001/storage/saves.dart';
 
-/*........................................... Program ......................................*/
+//Custom
+import 'package:stockrails_001/custom/flappy_search_bar.dart';
+import 'package:stockrails_001/custom/bottom_sheet.dart' as my;
+
+// Dart Files
+import 'dart:ui';
+import 'dart:async';
+import 'dart:convert';
 
 //Identifiers
 String companyName;
@@ -28,17 +28,20 @@ String symbol;
 //Focus State
 ValueChanged<bool> onFocusChanged;
 
+//Future container
+var updatedFuture;
+
+/*........................................... Program ......................................*/
 
 class Search extends StatefulWidget {
-
   @override
   _SearchState createState() => _SearchState();
 
-  // * Future
-  updateSymbolList() async {
-
+  // * Update future
+  updateFuture() async {
+    updatedFuture = await getSymbolList();
+    return updatedFuture;
   }
-
 
   // * Captures list of all symbols
   getSymbolList() async {
@@ -60,16 +63,17 @@ class Search extends StatefulWidget {
   }
 
   // * Opens notifier creation page
-  newNotifier(context, String companyName, String exchange, String symbol) {// Records latest price
+  newNotifier(context, String companyName, String exchange, String symbol) {
+    // Records latest price
 
-  Navigator.of(context).pushNamed('/notifier', arguments: {
+    Navigator.of(context).pushNamed('/notifier', arguments: {
       'symbol': symbol,
       'companyname': companyName,
       'exchange': exchange,
-    });  // Pushes data to next page
+    }); // Pushes data to next page
   }
 
- // * Displays bottom sheet
+  // * Displays bottom sheet
   showBottomSheet(context, String companyName, String exchange, String symbol) async {
     my.showModalBottomSheet(
         context: (context),
@@ -220,55 +224,51 @@ class Search extends StatefulWidget {
                     ],
                   ),
                 ),
-
 // * -------------------------------------------------- New alert add button
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
                   child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    
-                  FutureBuilder(
-                    future: getSymbolCount(symbol),
-                    builder: (context, snapBottomSheet) {
-                    
-                    if(snapBottomSheet.data != null) {
-                      if(snapBottomSheet.data > 0 || notifierData.notifierHasAlert == true) return Container(alignment: Alignment.center, child: Text('Notifier'));
-                        
-                      else return FlatButton(
-                        onPressed: () {
-                          newNotifier(context, companyName, exchange, symbol);
-                        },
-                        color: Colours.grey7,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(25.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.add,
-                                color: Colours.grey10,
-                              ),
-                              SizedBox(height: 10.0),
-                              Text(
-                                'New Alert'.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colours.grey10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ));
-                    } else {
-                      return Container(); 
-                    }
-
-                      })
-
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      FutureBuilder(
+                          future: getSymbolCount(symbol),
+                          builder: (context, snapBottomSheet) {
+                            if (snapBottomSheet.data != null) {
+                              if (snapBottomSheet.data > 0 || notifierData.notifierHasAlert == true)
+                                return Container(alignment: Alignment.center, child: Text('Notifier'));
+                              else
+                                return FlatButton(
+                                    onPressed: () {
+                                      newNotifier(context, companyName, exchange, symbol);
+                                    },
+                                    color: Colours.grey7,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(25.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.add,
+                                            color: Colours.grey10,
+                                          ),
+                                          SizedBox(height: 10.0),
+                                          Text(
+                                            'New Alert'.toUpperCase(),
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colours.grey10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ));
+                            } else {
+                              return Container();
+                            }
+                          })
                     ],
                   ),
                 ),
@@ -277,21 +277,15 @@ class Search extends StatefulWidget {
           );
         });
   }
-
 }
 
-
 class _SearchState extends State<Search> {
-
   @override
   Widget build(BuildContext context) {
-
-
     // * Application
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(children: <Widget>[
-
 // * -------------------------------------------------- Underlying Content
 
         Container(
@@ -299,58 +293,66 @@ class _SearchState extends State<Search> {
           margin: EdgeInsets.fromLTRB(0.0, Sizes.searchBarHeight, 0.0, 0.0),
           padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
           child: Column(
-              children: <Widget>[
-
+            children: <Widget>[
               FutureBuilder(
-                future: widget.getSymbolList(),
+                future: widget.updateFuture(),
                 builder: (context, snapSymbolList) {
-
-                  if(snapSymbolList.data == null) return Container();
-
-                  else return Expanded(
-                    child: ListView.builder(
+                  if (snapSymbolList.data == null)
+                    return Container();
+                  else
+                    return Expanded(
+                      child: ListView.builder(
                           itemCount: snapSymbolList.data.length + 1,
                           itemBuilder: (BuildContext context, int i) {
-
                             // * Corrects index
                             int q = i - 1;
 
                             // * Dashboard list icon buttons
-                            if(i == 0) return Padding(
-                              padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-
+                            if (i == 0)
+                              return Padding(
+                                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
+                                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                                   // TODO Delete me eventually
-                                  RaisedButton(onPressed: () {
-                                    notifierHelperData.readAll();
-                                    }, child: Text('Read')),
+                                  RaisedButton(
+                                      onPressed: () {
+                                        notifierHelperData.readAll();
+                                      },
+                                      child: Text('Read')),
 
                                   SizedBox(width: 10.0),
 
-                                  GestureDetector(onTap: () {}, child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Icon(Icons.create, size: 21.0, color: Colors.grey[600],),
-                                  )),
-                                  GestureDetector(onTap: () {}, child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Icon(Icons.crop_3_2, size: 24.0, color: Colors.grey[600]),
-                                  )),
-                              ]),
-                            );
-                            
-                            // * Dashboard list
-                            else return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
-                              child: Container(
-                                child: FlatButton(
+                                  GestureDetector(
+                                      onTap: () {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Icon(
+                                          Icons.create,
+                                          size: 21.0,
+                                          color: Colors.grey[600],
+                                        ),
+                                      )),
+                                  GestureDetector(
+                                      onTap: () {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Icon(Icons.crop_3_2, size: 24.0, color: Colors.grey[600]),
+                                      )),
+                                ]),
+                              );
+
+// * -------------------------------------------------- Dashboard List
+
+                            else
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 0.0),
+                                child: Container(
+                                  child: FlatButton(
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                     padding: EdgeInsets.all(35.0),
                                     color: Colors.grey[200],
                                     onPressed: () {
                                       setState(() {
-                                      widget.getSymbolList();
+                                        widget.getSymbolList();
                                       });
                                       widget.showBottomSheet(context, snapSymbolList.data[q].companyname, snapSymbolList.data[q].exchange, snapSymbolList.data[q].symbol);
                                     },
@@ -358,12 +360,12 @@ class _SearchState extends State<Search> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
                                             // * Symbol title
-                                            Text(snapSymbolList.data[q].symbol.toString(),
-                                                style: TextStyle(
+                                            Text(
+                                              snapSymbolList.data[q].symbol.toString(),
+                                              style: TextStyle(
                                                 fontSize: 20.0,
                                                 fontWeight: FontWeight.w700,
                                               ),
@@ -371,58 +373,53 @@ class _SearchState extends State<Search> {
 
                                             // * Company name title
                                             Text(snapSymbolList.data[q].companyname.toString()),
-
                                           ],
                                         ),
-                                        
+
                                         // * This displays the notifier count for each symbol!
                                         Row(
-                                        children: <Widget>[
+                                          children: <Widget>[
                                             FutureBuilder(
-                                             future: widget.getSymbolCount(snapSymbolList.data[q].symbol.toString()),
-                                             builder: (context, snapSymbolCount) {
+                                                future: widget.getSymbolCount(snapSymbolList.data[q].symbol.toString()),
+                                                builder: (context, snapSymbolCount) {
+                                                  // Returns placeholder while data loads
+                                                  if (snapSymbolCount.data == null)
+                                                    return Text('0');
 
-                                                // Returns placeholder while data loads
-                                                if(snapSymbolCount.data == null) return Text('0');
-
-                                                // Returns data
-                                                else return Container(
-                                                  height: 25.0,
-                                                  width: 30.0,
-                                                  child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                  children: <Widget>[
-                                                  Text(snapSymbolCount.data.toString(),
-                                                      style: TextStyle(
-                                                        fontWeight: FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  SizedBox(width: 0.5),
-                                                  Padding(
-                                                    padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 1.0),
-                                                    child: Icon(Icons.notifications, size: 17.0),
-                                                  ),
-                                                  ]),
-                                                );
-                                              }
-                                            ),
+                                                  // Returns data
+                                                  else
+                                                    return Container(
+                                                      height: 25.0,
+                                                      width: 30.0,
+                                                      child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+                                                        Text(
+                                                          snapSymbolCount.data.toString(),
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 0.5),
+                                                        Padding(
+                                                          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 1.0),
+                                                          child: Icon(Icons.notifications, size: 17.0),
+                                                        ),
+                                                      ]),
+                                                    );
+                                                }),
                                           ],
                                         ),
                                       ],
                                     ),
+                                  ),
                                 ),
-                          ),
-                        );
-                      }
-                    ),
-                  );
+                              );
+                          }),
+                    );
                 },
               ),
             ],
           ),
         ),
-
 
 // * -------------------------------------------------- Search Bar
 
@@ -549,14 +546,11 @@ class _SearchState extends State<Search> {
             );
           },
         ),
-      
       ]),
     );
   }
 
-
 // * -------------------------------------------------- API Data!
-
 
   Future<List<StockSearch>> getStockSearch(String search) async {
     String symbol;
@@ -566,7 +560,7 @@ class _SearchState extends State<Search> {
     var stockSearchSymbolJSONData;
 
     try {
-    stockSearchSymbolJSONData = json.decode(stockSearchSymbolData.body);
+      stockSearchSymbolJSONData = json.decode(stockSearchSymbolData.body);
     } on FormatException {
       print('search.dart :: FormatException :: JSON is unreadable!');
     }
@@ -574,23 +568,22 @@ class _SearchState extends State<Search> {
     List<Symbol> stockSymbolList = [];
     List<StockSearch> stockSearchList = [];
 
-    if(stockSearchSymbolJSONData != null) {
-        for (var u in stockSearchSymbolJSONData) {
+    if (stockSearchSymbolJSONData != null) {
+      for (var u in stockSearchSymbolJSONData) {
+        // * --------------- This adds in from the first API search -----
+        Symbol stockSymbolUpdate = Symbol(u["symbol"]);
+        stockSymbolList.add(stockSymbolUpdate);
+        symbol = u["symbol"];
+        print(symbol);
 
-          // * --------------- This adds in from the first API search -----
-          Symbol stockSymbolUpdate = Symbol(u["symbol"]);
-          stockSymbolList.add(stockSymbolUpdate);
-          symbol = u["symbol"];
-          print(symbol);
-    
-          // * --------------- This gathers the remaining information using a new api request from the symbol list above -----
-          var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5'));
-          var stockSearchJSONData = json.decode(stockSearchData.body);
-    
-          if (stockSearchData.statusCode == 200) {
-            if (stockSearchJSONData.toString().contains('latestPrice: null') == false) stockSearchList.add(StockSearch.fromJson(stockSearchJSONData));
-          }
+        // * --------------- This gathers the remaining information using a new api request from the symbol list above -----
+        var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5'));
+        var stockSearchJSONData = json.decode(stockSearchData.body);
+
+        if (stockSearchData.statusCode == 200) {
+          if (stockSearchJSONData.toString().contains('latestPrice: null') == false) stockSearchList.add(StockSearch.fromJson(stockSearchJSONData));
         }
+      }
     } else {
       print('search.dart :: JSON Data is unreadable!');
     }
@@ -599,25 +592,6 @@ class _SearchState extends State<Search> {
 
     return stockSearchList;
   }
-
-
-  // // * This future simply makes a new call to the api for information using the specified symbol
-  // Future<StockSearch> stockInfo(String symbol) async {
-
-  //         // Makes call to api
-  //         var stockSearchData = await http.get(('https://cloud.iexapis.com/stable/stock/' + '$symbol' + '/quote?token=pk_d41c533580ca4184ab59cb764a374bb5'));
-          
-  //         // Decodes the body
-  //         var stockSearchJSONData = json.decode(stockSearchData.body);
-
-  //         // Parses JSON data into useable iterables
-  //         StockSearch result = StockSearch.fromJson(stockSearchJSONData);
-
-  //         // Returns the result
-  //         return result;
-
-  // }
-
 
 }
 

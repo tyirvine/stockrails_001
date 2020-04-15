@@ -1,26 +1,32 @@
 
-//Flutter SDK
+//Dependencies
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-//Global Data
+//Pages
+import 'package:stockrails_001/pages/search.dart';
+
+//Models
+import 'package:stockrails_001/models/statics-model.dart';
+import 'package:stockrails_001/models/stock-model.dart';
+
+//Storage
 import 'package:stockrails_001/data.dart';
 import 'package:stockrails_001/storage/saves.dart';
-import 'package:stockrails_001/classes.dart';
+
+//Custom
+import 'package:stockrails_001/custom/picker.dart' as my;
 
 // Dart Files
 import 'dart:async';
 import 'dart:convert';
 
-//Pages
-import 'package:stockrails_001/custom/picker.dart' as my;
 
 
 
 /*........................................... Program ......................................*/
-
 
 
 class Notifier extends StatefulWidget {
@@ -44,7 +50,6 @@ class _NotifierState extends State<Notifier> {
   NotifierNavigation navigation;
   NotifierDatabaseHelper database;
 
-
   //Notifier Animations
   bool animateBackButton = false;
   bool animateFinishButton = false;
@@ -57,11 +62,9 @@ class _NotifierState extends State<Notifier> {
   //Notifier Text Input Controller
   final notifierPage2Controller = TextEditingController();
 
-
   //Symbol data from search.dart
   Map data = {};
   
-
 
 
   @override
@@ -158,6 +161,12 @@ class _NotifierState extends State<Notifier> {
 
     //Resets all data for notifier creation
     resetCreation() async {
+
+      // * Updates the dashboard's future list
+      setState(() {
+      Search().updateFuture();
+      });
+
       notifierData.notifierDataReset();
       notifierNavigationData.pageCountReset();
       setState(() {
@@ -833,7 +842,7 @@ class _NotifierState extends State<Notifier> {
                                         if(notifierNavigationData.pageCount == 4) {
                                           writeNotifier('${data['symbol']}');
                                           setState(() {
-                                          
+                                          Search().updateFuture();
                                           notifierData.notifierHasAlert = true;                                            
                                           }); // * Updates UI on bottom sheet
                                           Navigator.pop(context);

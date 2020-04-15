@@ -1,6 +1,5 @@
 
-
-//Flutter SDK
+//Dependencies
 import 'package:flutter/material.dart';
 
 //Project Pages
@@ -8,7 +7,6 @@ import 'package:stockrails_001/pages/home.dart';
 import 'package:stockrails_001/pages/notifiermenu.dart';
 import 'package:stockrails_001/pages/search.dart';
 import 'package:stockrails_001/pages/notifier.dart';
-
 
 /*........................................... Program ......................................*/
 

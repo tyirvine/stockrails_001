@@ -1,8 +1,8 @@
-//Flutter SDK
+//Dependencies
 import 'package:flutter/material.dart';
 
-//Global Data
-import 'package:stockrails_001/data.dart';
+//Models
+import 'package:stockrails_001/models/statics-model.dart';
 
 
 class NotifierMenu extends StatefulWidget {
